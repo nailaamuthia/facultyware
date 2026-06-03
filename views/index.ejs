@@ -1,11 +1,127 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Daftar Publikasi — Facultyware</title>
+  <link rel="stylesheet" href="/assets/styles.css"/>
+
+  <style>
+    body { font-family: Inter, sans-serif; }
+    .welcome-banner {
+      background: linear-gradient(135deg, #006B35 0%, #1a8a4a 60%, #C8A951 100%);
+      border-radius: 16px;
+      padding: 28px 32px;
+      color: #fff;
+      margin-bottom: 24px;
+    }
+    .unand-card {
+      background: #fff;
+      border: 1px solid #e8edf0;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .unand-card-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #f0f4f2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    .data-table th {
+      background: #e8f5ed;
+      color: #006B35;
+      padding: 10px 16px;
+      text-align: left;
+      font-size: 0.8rem;
+    }
+    .data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0f4f2;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+
+<body>
+  <%- include('../partials/sidebar') %>
+
+  <main id="content">
+    <%- include('../partials/topbar', { pageTitle: 'Daftar Publikasi' }) %>
+
+    <div class="p-4 md:p-6" style="max-width:1280px; margin:0 auto;">
+
+      <div class="welcome-banner">
+        <p style="font-size:0.85rem;margin:0 0 8px;">Universitas Andalas</p>
+        <h1 style="font-size:1.7rem;font-weight:700;margin:0 0 6px;">Daftar Publikasi</h1>
+        <p style="opacity:0.9;margin:0;">Kelola data publikasi dosen pada sistem Facultyware.</p>
+      </div>
+
+      <div class="unand-card">
+        <div class="unand-card-header">
+          <div>
+            <h2 style="color:#006B35;margin:0;">Data Publikasi</h2>
+            <p style="font-size:0.85rem;color:#6b7280;margin:4px 0 0;">
+              Daftar seluruh publikasi yang sudah masuk ke sistem.
+            </p>
+          </div>
+
+          <a href="/publikasi/create"
+             style="background:#006B35;color:white;padding:9px 16px;border-radius:8px;text-decoration:none;font-weight:600;font-size:0.85rem;">
+            + Tambah Publikasi
+          </a>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Judul</th>
+                <th>Tahun</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (publikasi.length === 0) { %>
+                <tr>
+                  <td colspan="5" style="text-align:center;color:#6b7280;padding:40px;">
+                    Belum ada data publikasi
+                  </td>
+                </tr>
+              <% } else { %>
+                <% publikasi.forEach((item, index) => { %>
+                  <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= item.title || item.judul || '-' %></td>
+                    <td><%= item.year || item.tahun || '-' %></td>
+                    <td><%= item.status || '-' %></td>
+                    <td>
+                      <a href="#" style="color:#006B35;text-decoration:none;font-weight:600;">Detail</a>
+                      |
+                      <a href="#" style="color:#2563eb;text-decoration:none;font-weight:600;">Edit</a>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/assets/js/basecoat.js" defer></script>
+  <script src="/assets/js/sidebar.js" defer></script>
+  <script src="/assets/js/popover.js" defer></script>
+  <script src="/assets/js/toast.js" defer></script>
+</body>
 </html>

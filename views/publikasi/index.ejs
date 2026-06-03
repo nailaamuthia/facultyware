@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Daftar Publikasi — Sistem Publikasi B14</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/assets/styles.css"/>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f4f6f8;
+    }
+
+    .page-banner {
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,0.22), transparent 30%),
+        linear-gradient(135deg, #1f2937 0%, #334155 50%, #64748b 100%);
+      border-radius: 20px;
+      padding: 28px 32px;
+      color: white;
+      margin-bottom: 24px;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-banner::after {
+      content: "PUB";
+      position: absolute;
+      right: 36px;
+      top: 18px;
+      font-size: 5.8rem;
+      font-weight: 800;
+      letter-spacing: -6px;
+      color: rgba(255,255,255,0.08);
+    }
+
+    .page-badge {
+      display: inline-flex;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.22);
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 20px 22px;
+      border-bottom: 1px solid #eef2f7;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .panel-desc {
+      margin: 4px 0 0;
+      font-size: 0.84rem;
+      color: #64748b;
+    }
+
+    .btn-main {
+      background: #475569;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 0.84rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-main:hover {
+      background: #334155;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      padding: 0;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    .data-table thead th {
+      background: #f8fafc;
+      color: #475569;
+      text-align: left;
+      padding: 14px 18px;
+      font-weight: 700;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .data-table tbody td {
+      padding: 15px 18px;
+      border-bottom: 1px solid #eef2f7;
+      color: #334155;
+    }
+
+    .data-table tbody tr:hover {
+      background: #f8fafc;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+      color: #64748b;
+    }
+
+    .empty-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #eef2ff;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .action-link {
+      font-weight: 700;
+      text-decoration: none;
+      color: #475569;
+      margin-right: 12px;
+      font-size: 0.84rem;
+    }
+
+    .action-link:hover {
+      color: #1f2937;
+      text-decoration: underline;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+  <%- include('../partials/sidebar') %>
+
+  <main id="content">
+    <%- include('../partials/topbar', { pageTitle: 'Daftar Publikasi' }) %>
+
+    <div class="p-4 md:p-6" style="max-width:1280px; margin:0 auto;">
+
+      <section class="page-banner">
+        <div style="position:relative;z-index:1;max-width:720px;">
+          <div class="page-badge">Modul Publikasi</div>
+          <h1 style="font-size:1.8rem;font-weight:800;margin:0 0 8px;">
+            Daftar Publikasi Dosen
+          </h1>
+          <p style="margin:0;opacity:0.9;line-height:1.6;">
+            Halaman ini digunakan untuk melihat seluruh data publikasi dosen yang sudah tercatat pada sistem.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Data Publikasi</h2>
+            <p class="panel-desc">Kelola data publikasi, detail publikasi, dan proses pembaruan data.</p>
+          </div>
+
+          <a href="/publikasi/create" class="btn-main">
+            + Tambah Publikasi
+          </a>
+        </div>
+
+        <div class="table-wrap">
+          <% if (publikasi.length === 0) { %>
+            <div class="empty-state">
+              <div class="empty-icon">
+                <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                </svg>
+              </div>
+              <h3 style="margin:0 0 6px;color:#334155;">Belum Ada Data Publikasi</h3>
+              <p style="margin:0 0 18px;">Data publikasi belum tersedia. Tambahkan data publikasi pertama sekarang.</p>
+              <a href="/publikasi/create" class="btn-main">Tambah Publikasi</a>
+            </div>
+          <% } else { %>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Judul Publikasi</th>
+                  <th>Tahun</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <% publikasi.forEach((item, index) => { %>
+                  <tr>
+                    <td><%= index + 1 %></td>
+                    <td style="font-weight:700;color:#1f2937;">
+                      <%= item.title || item.judul || '-' %>
+                    </td>
+                    <td><%= item.year || item.tahun || '-' %></td>
+                    <td>
+                      <span class="status-badge"><%= item.status || '-' %></span>
+                    </td>
+                    <td>
+                      <a href="#" class="action-link">Detail</a>
+                      <a href="#" class="action-link">Edit</a>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } %>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="/assets/js/basecoat.js" defer></script>
+  <script src="/assets/js/sidebar.js" defer></script>
+  <script src="/assets/js/popover.js" defer></script>
+  <script src="/assets/js/toast.js" defer></script>
+</body>
+</html>

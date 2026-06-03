@@ -1,0 +1,184 @@
+<style>
+  #sidebar {
+    background-color: #fcfdfc !important;
+    border-right: 1px solid #e0e8e3 !important;
+    box-shadow: 4px 0 15px rgba(0, 107, 53, 0.03) !important;
+  }
+
+  #sidebar nav > header a,
+  #sidebar nav > header a span,
+  #sidebar section h3,
+  #sidebar section a,
+  #sidebar section a span,
+  #sidebar footer button,
+  #sidebar footer button span,
+  #sidebar footer .text-muted-foreground {
+    color: #1a2e22 !important;
+  }
+
+  #sidebar section a svg {
+    color: #4a6353 !important;
+    stroke: #4a6353 !important;
+  }
+
+  #sidebar section a:hover {
+    background-color: #e8f0eb !important;
+  }
+
+  #sidebar section a[aria-current="page"] {
+    background-color: #e8f0eb !important;
+    border-left: 3px solid #006B35 !important;
+    font-weight: 600 !important;
+  }
+
+  #sidebar section a[aria-current="page"] span,
+  #sidebar section a[aria-current="page"] svg {
+    color: #006B35 !important;
+    stroke: #006B35 !important;
+  }
+</style>
+
+<aside id="sidebar" class="sidebar" data-side="left" aria-hidden="false">
+  <nav aria-label="Sidebar navigation">
+    <header>
+      <a href="/home" class="btn-ghost p-2 h-12 w-full justify-start">
+        <div class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg" style="background-color:#006B35;color:white;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/>
+          </svg>
+        </div>
+        <div class="grid flex-1 text-left text-sm leading-tight">
+          <span class="truncate font-semibold">Sistem Publikasi</span>
+          <span class="truncate text-xs text-muted-foreground">Kelompok B14 · PWEB</span>
+        </div>
+      </a>
+    </header>
+
+    <section class="scrollbar">
+      <div role="group">
+        <h3 class="px-2 font-semibold" style="opacity:0.6;">Menu Utama</h3>
+        <ul>
+          <li>
+            <a href="/home">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect width="7" height="9" x="3" y="3" rx="1"/>
+                <rect width="7" height="5" x="14" y="3" rx="1"/>
+                <rect width="7" height="9" x="14" y="12" rx="1"/>
+                <rect width="7" height="5" x="3" y="16" rx="1"/>
+              </svg>
+              <span>Dashboard</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div role="group">
+        <h3 class="px-2 font-semibold" style="opacity:0.6;margin-top:1rem;">Publikasi</h3>
+        <ul>
+          <li>
+            <a href="/publikasi">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="8" y1="13" x2="16" y2="13"/>
+                <line x1="8" y1="17" x2="16" y2="17"/>
+              </svg>
+              <span>Daftar Publikasi</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="/publikasi/create">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14"/>
+                <path d="M5 12h14"/>
+              </svg>
+              <span>Tambah Publikasi</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div role="group">
+        <h3 class="px-2 font-semibold" style="opacity:0.6;margin-top:1rem;">Pengelolaan</h3>
+        <ul>
+          <li>
+            <a href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              <span>Penulis Publikasi</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <path d="M21 12a9 9 0 1 1-9-9"/>
+              </svg>
+              <span>Approval Publikasi</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div role="group">
+        <h3 class="px-2 font-semibold" style="opacity:0.6;margin-top:1rem;">Lainnya</h3>
+        <ul>
+          <li>
+            <a href="/api/publikasi" target="_blank">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+              </svg>
+              <span>REST API Publikasi</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      <div id="sidebar-user-popover" class="popover">
+        <button
+          id="sidebar-user-popover-trigger"
+          type="button"
+          aria-expanded="false"
+          aria-controls="sidebar-user-popover-popover"
+          class="btn-ghost p-2 h-12 w-full flex items-center justify-start"
+          data-keep-mobile-sidebar-open="">
+          <div class="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-full font-semibold text-sm" style="background-color:#006B35;color:white;">
+            <%= locals.user ? locals.user.name.charAt(0).toUpperCase() : 'U' %>
+          </div>
+          <div class="grid flex-1 text-left text-sm leading-tight">
+            <span class="truncate font-medium"><%= locals.user ? locals.user.name : 'User' %></span>
+            <span class="truncate text-xs capitalize text-muted-foreground"><%= locals.user ? locals.user.role : '' %></span>
+          </div>
+        </button>
+
+        <div id="sidebar-user-popover-popover" data-popover aria-hidden="true" data-side="top" class="w-[240px]" style="background-color:#fff;border:1px solid #e0e8e3;color:#1a2e22;">
+          <div class="grid gap-3">
+            <header class="grid gap-0.5">
+              <h2 class="font-semibold text-sm"><%= locals.user ? locals.user.name : 'User' %></h2>
+              <p class="text-xs" style="color:#4a6353;"><%= locals.user ? locals.user.email : '' %></p>
+              <span class="badge badge-outline capitalize text-xs w-fit" style="color:#006B35;border-color:#006B35;">
+                <%= locals.user ? locals.user.role : '' %>
+              </span>
+            </header>
+
+            <footer>
+              <a href="/logout" class="btn-sm-outline w-full" style="color:#d32f2f;border-color:#fca5a5;">
+                Logout
+              </a>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </nav>
+</aside>

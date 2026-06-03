@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Tambah Publikasi — Sistem Publikasi B14</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/assets/styles.css"/>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f4f6f8;
+    }
+
+    .page-banner {
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,0.22), transparent 30%),
+        linear-gradient(135deg, #1f2937 0%, #334155 50%, #64748b 100%);
+      border-radius: 20px;
+      padding: 24px 32px;
+      color: white;
+      margin-bottom: 20px;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-banner::after {
+      content: "ADD";
+      position: absolute;
+      right: 36px;
+      top: 18px;
+      font-size: 5.8rem;
+      font-weight: 800;
+      letter-spacing: -6px;
+      color: rgba(255,255,255,0.08);
+    }
+
+    .page-badge {
+      display: inline-flex;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.22);
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 20px 22px;
+      border-bottom: 1px solid #eef2f7;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .panel-desc {
+      margin: 4px 0 0;
+      font-size: 0.84rem;
+      color: #64748b;
+    }
+
+    .form-wrap {
+      padding: 22px;
+      display: grid;
+      gap: 16px;
+      max-width: 760px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+
+    .form-control {
+      width: 100%;
+      border: 1px solid #dbe2ea;
+      border-radius: 12px;
+      padding: 11px 13px;
+      font-size: 0.9rem;
+      outline: none;
+      background: #ffffff;
+      font-family: 'Inter', sans-serif;
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-control:focus {
+      border-color: #475569;
+      box-shadow: 0 0 0 3px rgba(71, 85, 105, 0.12);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .btn-main {
+      background: #475569;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-main:hover {
+      background: #334155;
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+      padding: 10px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.86rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+  <%- include('../partials/sidebar') %>
+
+  <main id="content">
+    <%- include('../partials/topbar', { pageTitle: 'Tambah Publikasi' }) %>
+
+    <div class="p-4 md:p-6" style="max-width:1280px; margin:0 auto; padding-top:18px;">
+
+      <section class="page-banner">
+        <div style="position:relative;z-index:1;max-width:720px;">
+          <div class="page-badge">Form Publikasi</div>
+          <h1 style="font-size:1.8rem;font-weight:800;margin:0 0 8px;">
+            Tambah Publikasi Dosen
+          </h1>
+          <p style="margin:0;opacity:0.9;line-height:1.6;">
+            Masukkan data publikasi baru agar dapat tercatat dan dikelola pada sistem.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Form Data Publikasi</h2>
+          <p class="panel-desc">Isi data publikasi sesuai informasi yang tersedia.</p>
+        </div>
+
+        <form action="/publikasi/store" method="POST" class="form-wrap">
+          <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert-error"><%= error %></div>
+          <% } %>
+
+          <div class="form-group">
+            <label>Judul Publikasi</label>
+            <input
+              type="text"
+              name="title"
+              class="form-control"
+              placeholder="Masukkan judul publikasi"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Tanggal Publikasi</label>
+            <input
+              type="date"
+              name="publication_date"
+              class="form-control"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>DOI</label>
+            <input
+              type="text"
+              name="doi"
+              class="form-control"
+              placeholder="Contoh: 10.1000/xyz123"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>URL Publikasi</label>
+            <input
+              type="url"
+              name="url"
+              class="form-control"
+              placeholder="https://..."
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Abstract</label>
+            <textarea
+              name="abstract"
+              class="form-control"
+              placeholder="Masukkan ringkasan publikasi"
+            ></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-main">Simpan Publikasi</button>
+            <a href="/publikasi" class="btn-secondary">Kembali</a>
+          </div>
+        </form>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="/assets/js/basecoat.js" defer></script>
+  <script src="/assets/js/sidebar.js" defer></script>
+  <script src="/assets/js/popover.js" defer></script>
+  <script src="/assets/js/toast.js" defer></script>
+</body>
+</html>
