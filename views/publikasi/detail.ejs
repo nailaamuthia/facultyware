@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <%# ---- Theme init (harus paling awal) ---- %>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("themeMode");
+        if (stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches) {
+          document.documentElement.classList.add("dark");
+        }
+      } catch (_) {}
+      const apply = (dark) => {
+        document.documentElement.classList.toggle("dark", dark);
+        try { localStorage.setItem("themeMode", dark ? "dark" : "light"); } catch (_) {}
+      };
+      document.addEventListener("basecoat:theme", (event) => {
+        const mode = event.detail?.mode;
+        apply(mode === "dark" ? true : mode === "light" ? false : !document.documentElement.classList.contains("dark"));
+      });
+    })();
+  </script>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Detail Publikasi — Sistem Publikasi B14</title>
+
+  <link rel="stylesheet" href="/assets/styles.css"/>
+
+  <style>
+    body {
+      font-family: Inter, sans-serif;
+      background: var(--color-background);
+      color: var(--color-foreground);
+    }
+
+    .detail-card {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+    }
+
+    .detail-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      color: var(--color-foreground);
+    }
+
+    .detail-row {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .detail-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--color-muted-foreground);
+      margin-bottom: 4px;
+    }
+
+    .detail-value {
+      color: var(--color-foreground);
+      line-height: 1.6;
+    }
+
+    .detail-value a {
+      color: var(--color-primary);
+      word-break: break-all;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      margin-top: 22px;
+      padding: 10px 16px;
+      background: #475569;
+      color: white;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .btn-back:hover {
+      background: #334155;
+    }
+  </style>
+</head>
+
+<body>
+  <%- include('../partials/sidebar') %>
+
+  <main id="content">
+    <%- include('../partials/topbar', { pageTitle: 'Detail Publikasi' }) %>
+
+    <div class="p-4 md:p-6" style="max-width:1000px; margin:0 auto;">
+      <section class="detail-card">
+        <h1 class="detail-title">Detail Publikasi</h1>
+
+        <div class="detail-row">
+          <div class="detail-label">Judul Publikasi</div>
+          <div class="detail-value"><%= publikasi.title || '-' %></div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-label">Tanggal Publikasi</div>
+          <div class="detail-value"><%= publikasi.publication_date ? new Date(publikasi.publication_date).toLocaleDateString('id-ID', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+            })
+            : '-' 
+            %></div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-label">DOI</div>
+          <div class="detail-value"><%= publikasi.doi || '-' %></div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-label">URL</div>
+          <div class="detail-value">
+            <% if (publikasi.url) { %>
+              <a href="<%= publikasi.url %>" target="_blank"><%= publikasi.url %></a>
+            <% } else { %>
+              -
+            <% } %>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-label">Abstrak</div>
+          <div class="detail-value"><%= publikasi.abstract || '-' %></div>
+        </div>
+
+        <a href="/publikasi" class="btn-back">← Kembali</a>
+      </section>
+    </div>
+  </main>
+
+  <script src="/assets/js/basecoat.js" defer></script>
+  <script src="/assets/js/sidebar.js" defer></script>
+  <script src="/assets/js/popover.js" defer></script>
+  <script src="/assets/js/toast.js" defer></script>
+</body>
+</html>

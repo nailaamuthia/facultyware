@@ -6,4 +6,6 @@ router.get("/", publikasiController.index);
 router.get("/create", publikasiController.create);
 router.post("/store", publikasiController.store);
 
+router.get('/:id', publikasiController.show);
+
 module.exports = router;

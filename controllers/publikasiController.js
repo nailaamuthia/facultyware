@@ -58,8 +58,39 @@ const store = async (req, res, next) => {
   }
 };
 
+const show = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const [rows] = await db.query(
+      `
+      SELECT * FROM publications
+      WHERE id = ?
+      `,
+      [id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).render("error", {
+        pageTitle: "Publikasi Tidak Ditemukan",
+        user: req.session.user,
+        message: "Data publikasi tidak ditemukan.",
+      });
+    }
+
+    res.render("publikasi/detail", {
+      pageTitle: "Detail Publikasi",
+      user: req.session.user,
+      publikasi: rows[0],
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   index,
   create,
   store,
+  show,
 };
