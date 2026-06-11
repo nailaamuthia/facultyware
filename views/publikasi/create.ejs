@@ -1,6 +1,26 @@
 <!doctype html>
 <html lang="id">
 <head>
+  <%# ---- Theme init (harus paling awal) ---- %>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("themeMode");
+        if (stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches) {
+          document.documentElement.classList.add("dark");
+        }
+      } catch (_) {}
+      const apply = (dark) => {
+        document.documentElement.classList.toggle("dark", dark);
+        try { localStorage.setItem("themeMode", dark ? "dark" : "light"); } catch (_) {}
+      };
+      document.addEventListener("basecoat:theme", (event) => {
+        const mode = event.detail?.mode;
+        apply(mode === "dark" ? true : mode === "light" ? false : !document.documentElement.classList.contains("dark"));
+      });
+    })();
+  </script>
+
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Tambah Publikasi — Sistem Publikasi B14</title>
@@ -13,7 +33,7 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: #f4f6f8;
+      background: var(--color-background);
     }
 
     .page-banner {
@@ -52,8 +72,8 @@
     }
 
     .panel {
-      background: white;
-      border: 1px solid #e5e7eb;
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
       border-radius: 18px;
       box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
       overflow: hidden;
@@ -61,20 +81,20 @@
 
     .panel-header {
       padding: 20px 22px;
-      border-bottom: 1px solid #eef2f7;
+      border-bottom: 1px solid var(--color-border);
     }
 
     .panel-title {
       margin: 0;
       font-size: 1.05rem;
       font-weight: 700;
-      color: #1f2937;
+      color: var(--color-foreground);
     }
 
     .panel-desc {
       margin: 4px 0 0;
       font-size: 0.84rem;
-      color: #64748b;
+      color: var(--color-muted-foreground);
     }
 
     .form-wrap {
@@ -88,18 +108,19 @@
       display: block;
       font-size: 0.86rem;
       font-weight: 700;
-      color: #334155;
+      color: var(--color-foreground);
       margin-bottom: 8px;
     }
 
     .form-control {
       width: 100%;
-      border: 1px solid #dbe2ea;
+      border: 1px solid var(--color-border);
       border-radius: 12px;
       padding: 11px 13px;
       font-size: 0.9rem;
       outline: none;
-      background: #ffffff;
+      background: var(--color-card);
+      color: var(--color-foreground);
       font-family: 'Inter', sans-serif;
     }
 
@@ -136,8 +157,8 @@
     }
 
     .btn-secondary {
-      background: #f1f5f9;
-      color: #334155;
+      background: var(--color-secondary);
+      color: var(--color-secondary-foreground);
       padding: 10px 16px;
       border-radius: 10px;
       text-decoration: none;
@@ -146,9 +167,9 @@
     }
 
     .alert-error {
-      background: #fef2f2;
-      color: #b91c1c;
-      border: 1px solid #fecaca;
+      background: rgba(220,38,38,0.1);
+      color: #f87171;
+      border: 1px solid rgba(220,38,38,0.3);
       border-radius: 12px;
       padding: 12px 14px;
       font-size: 0.86rem;

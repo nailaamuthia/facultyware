@@ -1,6 +1,26 @@
 <!doctype html>
 <html lang="id">
 <head>
+  <%# ---- Theme init (harus paling awal, sebelum CSS) ---- %>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("themeMode");
+        if (stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches) {
+          document.documentElement.classList.add("dark");
+        }
+      } catch (_) {}
+      const apply = (dark) => {
+        document.documentElement.classList.toggle("dark", dark);
+        try { localStorage.setItem("themeMode", dark ? "dark" : "light"); } catch (_) {}
+      };
+      document.addEventListener("basecoat:theme", (event) => {
+        const mode = event.detail?.mode;
+        apply(mode === "dark" ? true : mode === "light" ? false : !document.documentElement.classList.contains("dark"));
+      });
+    })();
+  </script>
+
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Dashboard — Sistem Publikasi B14</title>
@@ -13,7 +33,8 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: #f4f6f8;
+      background: var(--color-background);
+      color: var(--color-foreground);
     }
 
     .hero-publikasi {
@@ -71,12 +92,12 @@
     }
 
     .action-btn-light {
-      background: #ffffff;
+      background: rgba(255,255,255,0.9);
       color: #1f2937;
     }
 
     .action-btn-light:hover {
-      background: #e5e7eb;
+      background: rgba(255,255,255,0.75);
     }
 
     .quick-grid {
@@ -87,8 +108,8 @@
     }
 
     .quick-card {
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
       border-radius: 18px;
       padding: 20px 22px;
       box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
@@ -115,11 +136,12 @@
       font-size: 2rem;
       font-weight: 800;
       line-height: 1;
+      color: var(--color-foreground);
     }
 
     .quick-label {
       font-size: 0.84rem;
-      color: #64748b;
+      color: var(--color-muted-foreground);
       margin-left: 2px;
     }
 
@@ -130,8 +152,8 @@
     }
 
     .panel {
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
       border-radius: 18px;
       box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
       overflow: hidden;
@@ -139,7 +161,7 @@
 
     .panel-header {
       padding: 20px 22px;
-      border-bottom: 1px solid #eef2f7;
+      border-bottom: 1px solid var(--color-border);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -149,27 +171,27 @@
       margin: 0;
       font-size: 1rem;
       font-weight: 700;
-      color: #1f2937;
+      color: var(--color-foreground);
     }
 
     .panel-desc {
       margin: 4px 0 0;
       font-size: 0.82rem;
-      color: #64748b;
+      color: var(--color-muted-foreground);
     }
 
     .empty-box {
       text-align: center;
       padding: 52px 24px;
-      color: #64748b;
+      color: var(--color-muted-foreground);
     }
 
     .empty-circle {
       width: 70px;
       height: 70px;
       border-radius: 50%;
-      background: #eef2ff;
-      color: #475569;
+      background: var(--color-secondary);
+      color: var(--color-secondary-foreground);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -187,14 +209,14 @@
       align-items: flex-start;
       gap: 14px;
       padding: 14px 16px;
-      background: #f8fafc;
+      background: var(--color-secondary);
       border-radius: 14px;
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--color-border);
       transition: all .2s ease;
     }
 
     .mini-item:hover {
-      background: #eef2f7;
+      background: var(--color-accent);
       transform: translateY(-2px);
     }
 
@@ -202,7 +224,7 @@
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      background: #4b5563;
+      background: var(--color-muted-foreground);
       margin-top: 6px;
       flex-shrink: 0;
     }
@@ -242,53 +264,53 @@
       <section class="quick-grid">
         <div class="quick-card">
           <div class="quick-top">
-            <div class="quick-icon" style="background:#e0e7ff;color:#1e40af;">
+            <div class="quick-icon" style="background:rgba(99,102,241,0.15);color:#818cf8;">
               <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
                 <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/>
               </svg>
             </div>
-            <div class="quick-value" style="color:#1e40af;"><%= stats ? stats.total : 0 %></div>
+            <div class="quick-value"><%= stats ? stats.total : 0 %></div>
           </div>
           <div class="quick-label">Total Publikasi</div>
         </div>
 
         <div class="quick-card">
           <div class="quick-top">
-            <div class="quick-icon" style="background:#fef3c7;color:#b45309;">
+            <div class="quick-icon" style="background:rgba(245,158,11,0.15);color:#f59e0b;">
               <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M12 6v6l4 2"/>
                 <circle cx="12" cy="12" r="10"/>
               </svg>
             </div>
-            <div class="quick-value" style="color:#b45309;"><%= stats ? stats.proposed : 0 %></div>
+            <div class="quick-value"><%= stats ? stats.proposed : 0 %></div>
           </div>
           <div class="quick-label">Draft / Menunggu</div>
         </div>
 
         <div class="quick-card">
           <div class="quick-top">
-            <div class="quick-icon" style="background:#dbeafe;color:#2563eb;">
+            <div class="quick-icon" style="background:rgba(59,130,246,0.15);color:#60a5fa;">
               <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M9 12l2 2 4-4"/>
                 <circle cx="12" cy="12" r="10"/>
               </svg>
             </div>
-            <div class="quick-value" style="color:#2563eb;"><%= stats ? stats.completed : 0 %></div>
+            <div class="quick-value"><%= stats ? stats.completed : 0 %></div>
           </div>
           <div class="quick-label">Terpublikasi</div>
         </div>
 
         <div class="quick-card">
           <div class="quick-top">
-            <div class="quick-icon" style="background:#dcfce7;color:#15803d;">
+            <div class="quick-icon" style="background:rgba(34,197,94,0.15);color:#4ade80;">
               <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
                 <circle cx="9" cy="7" r="4"/>
                 <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
               </svg>
             </div>
-            <div class="quick-value" style="color:#15803d;"><%= totalDosen || 0 %></div>
+            <div class="quick-value"><%= totalDosen || 0 %></div>
           </div>
           <div class="quick-label">Penulis Terdata</div>
         </div>
@@ -311,7 +333,7 @@
                 <polyline points="14 2 14 8 20 8"/>
               </svg>
             </div>
-            <h3 style="margin:0 0 6px;color:#334155;">Belum Ada Data Publikasi</h3>
+            <h3 style="margin:0 0 6px;color:var(--color-foreground);">Belum Ada Data Publikasi</h3>
             <p style="margin:0;">Mulai tambahkan data publikasi pertama melalui menu Tambah Publikasi.</p>
           </div>
         </div>
