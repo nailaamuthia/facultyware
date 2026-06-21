@@ -27,7 +27,10 @@ router.post("/import", isAuthenticated, upload.single("file"), importController.
 
 // API JSON
 router.get("/json", publikasiController.apiGetAll);
+router.post("/json", publikasiController.apiCreate);
 router.get("/json/:id", publikasiController.apiGetById);
+router.put("/json/:id", publikasiController.apiUpdate);
+router.delete("/json/:id", publikasiController.apiDelete);
 
 router.get("/:id/edit", isAuthenticated, publikasiController.edit);
 router.post("/:id/update", isAuthenticated, publikasiController.update);

@@ -100,4 +100,74 @@ const apiGetById = async (req, res, next) => {
   }
 };
 
-module.exports = { index, create, store, show, edit, update, destroy, apiGetAll, apiGetById };
+// POST /publikasi/json - tambah publikasi baru via API
+const apiCreate = async (req, res, next) => {
+  try {
+    const { title, publication_type, publication_date, doi, url, abstract } = req.body;
+
+    if (!title || !publication_date) {
+      return res.status(422).json({
+        status: "error",
+        message: "Judul dan tanggal publikasi wajib diisi.",
+      });
+    }
+
+    const [result] = await db.query(
+      `INSERT INTO publications (title, publication_type, publication_date, doi, url, abstract) VALUES (?, ?, ?, ?, ?, ?)`,
+      [title, publication_type || null, publication_date, doi || null, url || null, abstract || null]
+    );
+
+    const [rows] = await db.query(`SELECT * FROM publications WHERE id = ?`, [result.insertId]);
+    res.status(201).json({ status: "success", message: "Publikasi berhasil ditambahkan.", data: rows[0] });
+  } catch (err) {
+    res.status(500).json({ status: "error", message: err.message });
+  }
+};
+
+// PUT /publikasi/json/:id - update publikasi via API
+const apiUpdate = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { title, publication_type, publication_date, doi, url, abstract } = req.body;
+
+    const [existing] = await db.query(`SELECT * FROM publications WHERE id = ?`, [id]);
+    if (existing.length === 0) {
+      return res.status(404).json({ status: "error", message: "Publikasi tidak ditemukan." });
+    }
+
+    if (!title || !publication_date) {
+      return res.status(422).json({
+        status: "error",
+        message: "Judul dan tanggal publikasi wajib diisi.",
+      });
+    }
+
+    await db.query(
+      `UPDATE publications SET title=?, publication_type=?, publication_date=?, doi=?, url=?, abstract=?, updated_at=NOW() WHERE id=?`,
+      [title, publication_type || null, publication_date, doi || null, url || null, abstract || null, id]
+    );
+
+    const [rows] = await db.query(`SELECT * FROM publications WHERE id = ?`, [id]);
+    res.json({ status: "success", message: "Publikasi berhasil diperbarui.", data: rows[0] });
+  } catch (err) {
+    res.status(500).json({ status: "error", message: err.message });
+  }
+};
+
+// DELETE /publikasi/json/:id - hapus publikasi via API
+const apiDelete = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const [existing] = await db.query(`SELECT * FROM publications WHERE id = ?`, [id]);
+    if (existing.length === 0) {
+      return res.status(404).json({ status: "error", message: "Publikasi tidak ditemukan." });
+    }
+
+    await db.query(`DELETE FROM publications WHERE id = ?`, [id]);
+    res.json({ status: "success", message: "Publikasi berhasil dihapus." });
+  } catch (err) {
+    res.status(500).json({ status: "error", message: err.message });
+  }
+};
+
+module.exports = { index, create, store, show, edit, update, destroy, apiGetAll, apiGetById, apiCreate, apiUpdate, apiDelete };
