@@ -8,28 +8,46 @@ const index = (req, res) => {
 
 const home = async (req, res, next) => {
   try {
-    const userId = req.session.userId;
+    // Stat: total publikasi
+    const [[{ totalPublikasi }]] = await db.query(
+      "SELECT COUNT(*) as totalPublikasi FROM publications"
+    );
 
-    const stats = {
-      total: 0,
-      proposed: 0,
-      ongoing: 0,
-      completed: 0,
-    };
+    // Stat: total jurnal
+    const [[{ totalJurnal }]] = await db.query(
+      "SELECT COUNT(*) as totalJurnal FROM publications WHERE LOWER(TRIM(publication_type)) = 'jurnal'"
+    );
 
-    const recentServices = [];
-    const pendingInvitations = 0;
-    const totalDosen = 0;
-    const isAdmin = true;
+    // Stat: total prosiding
+    const [[{ totalProsiding }]] = await db.query(
+      "SELECT COUNT(*) as totalProsiding FROM publications WHERE LOWER(TRIM(publication_type)) = 'prosiding'"
+    );
 
-    res.render("dashboard", {
-      pageTitle: "Dashboard",
-      user: req.session.user,
-      isAdmin,
-      stats,
-      pendingInvitations,
-      recentServices,
-      totalDosen,
+    // Stat: publikasi tahun ini
+    const [[{ publikasiTahunIni }]] = await db.query(
+      "SELECT COUNT(*) as publikasiTahunIni FROM publications WHERE publication_date IS NOT NULL AND YEAR(publication_date) = YEAR(CURDATE())"
+    );
+
+    // 5 publikasi terbaru
+    const [publikasiTerbaru] = await db.query(
+        "SELECT id, title, publication_type, publication_date FROM publications ORDER BY created_at DESC LIMIT 5"
+    );
+
+
+    res.render("home", {
+      title: "Beranda",
+      user: {
+        name: req.session.username,
+        email: req.session.email || "",
+        role: req.session.role || "dosen",
+      },
+      stats: {
+        totalPublikasi,
+        totalJurnal,
+        totalProsiding,
+        publikasiTahunIni,
+      },
+      publikasiTerbaru,
     });
   } catch (err) {
     next(err);
@@ -37,60 +55,45 @@ const home = async (req, res, next) => {
 };
 
 const loginPage = (req, res) => {
-  if (req.session.userId) return res.redirect("/home");
+  if (req.session.userId) {
+    return res.redirect("/home");
+  }
   res.render("login", { title: "Login", error: null });
 };
 
 const login = async (req, res, next) => {
   const { username, password } = req.body;
 
-  if (!username || !password) {
-    return res.render("login", {
-      title: "Login",
-      error: "Username dan password wajib diisi.",
-    });
-  }
-
   try {
     const [rows] = await db.query(
-      `SELECT id, name, email, password
-       FROM users
-       WHERE email = ? OR name = ?
-       LIMIT 1`,
+      "SELECT * FROM users WHERE email = ? OR name = ? LIMIT 1",
       [username, username]
     );
 
     if (rows.length === 0) {
       return res.render("login", {
         title: "Login",
-        error: "Username atau password salah.",
+        error: "Invalid username or password",
       });
     }
 
     const user = rows[0];
-
-    // Sementara dibuat true dulu supaya bisa masuk dashboard
-    const isMatch = true;
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.render("login", {
         title: "Login",
-        error: "Username atau password salah.",
+        error: "Invalid username or password",
       });
     }
 
     req.session.userId = user.id;
     req.session.username = user.name;
-    req.session.user = {
-      id: user.id,
-      name: user.name,
-      username: user.name,
-      email: user.email,
-      role: "admin",
-      lecturerId: null,
-    };
+    req.session.email = user.email;
+    req.session.role =
+      user.email === "salmiah@gmail.com" ? "dosen_anggota" : "dosen";
 
-    return res.redirect("/home");
+    res.redirect("/home");
   } catch (err) {
     next(err);
   }

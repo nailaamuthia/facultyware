@@ -27,10 +27,9 @@
       } catch (e) {}
     })();
   </script>
-
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Tambah Publikasi — Sistem Publikasi B14</title>
+  <title>Edit Publikasi — Sistem Publikasi B14</title>
   <link rel="stylesheet" href="/assets/styles.css"/>
 
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -70,8 +69,6 @@
     .fti-page-header h1 { color: #fff; margin: 0 0 6px; }
     .fti-page-header p { color: rgba(255,255,255,0.88); margin: 0; }
 
-    .fti-btn-primary { background: #fff; color: var(--fti-navy-deep); border: none; font-weight: 600; }
-    .fti-btn-primary:hover { background: rgba(255,255,255,0.88); }
     .fti-btn-outline { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.35); }
     .fti-btn-outline:hover { background: rgba(255,255,255,0.2); }
 
@@ -96,97 +93,80 @@
 </head>
 
 <body>
-  <script>
-    (() => {
-      document.addEventListener("DOMContentLoaded", () => {
-        const sidebar = document.getElementById("sidebar");
-        if (!sidebar) return;
-        const updateCurrentLinks = () => {
-          const currentPath = window.location.pathname.replace(/\/$/, "");
-          sidebar.querySelectorAll("a, button").forEach((item) => {
-            const href = item.getAttribute("href");
-            if (!href) { item.removeAttribute("aria-current"); return; }
-            const url = new URL(href, window.location.origin);
-            if (url.pathname.replace(/\/$/, "") === currentPath) {
-              item.setAttribute("aria-current", "page");
-            } else {
-              item.removeAttribute("aria-current");
-            }
-          });
-        };
-        updateCurrentLinks();
-      });
-    })();
-  </script>
-
   <%- include('../partials/sidebar') %>
 
   <main id="content">
-    <%- include('../partials/topbar', { pageTitle: 'Tambah Publikasi' }) %>
+    <%- include('../partials/topbar', { pageTitle: 'Edit Publikasi' }) %>
 
     <div class="p-4 md:p-6">
       <div class="max-w-screen-lg mx-auto">
 
         <header class="fti-page-header">
           <div style="position:relative;z-index:1;">
-            <h1 style="font-size:1.7rem;font-weight:800;">Tambah Publikasi</h1>
-            <p>Masukkan data publikasi baru agar dapat tercatat pada sistem.</p>
+            <h1 style="font-size:1.7rem;font-weight:800;">Edit Publikasi</h1>
+            <p>Perbarui data publikasi yang sudah tercatat pada sistem.</p>
             <div class="flex items-center gap-2" style="margin-top:18px;">
-              <a href="/publikasi" class="btn-outline fti-btn-outline">← Kembali</a>
+              <a href="/publikasi/<%= publikasi.id %>" class="btn-outline fti-btn-outline">← Kembali</a>
             </div>
           </div>
         </header>
 
         <div class="card fti-card">
           <header>
-            <h2>Form Data Publikasi</h2>
-            <p>Isi data publikasi sesuai informasi yang tersedia.</p>
+            <h2>Form Edit Publikasi</h2>
+            <p>Ubah data publikasi sesuai informasi terbaru.</p>
           </header>
           <section>
             <% if (typeof error !== 'undefined' && error) { %>
               <div class="alert alert-destructive mb-4"><%= error %></div>
             <% } %>
 
-            <form action="/publikasi/store" method="POST" class="form grid gap-6">
+            <form action="/publikasi/<%= publikasi.id %>/update" method="POST" class="form grid gap-6">
               <div class="grid gap-2">
                 <label for="title">Judul Publikasi</label>
-                <input type="text" id="title" name="title" placeholder="Contoh: Sistem Informasi Akademik Berbasis Web" required/>
+                <input type="text" id="title" name="title" value="<%= publikasi.title || '' %>" placeholder="Contoh: Sistem Informasi Akademik Berbasis Web" required/>
               </div>
 
               <div class="grid gap-2">
                 <label for="publication_type">Jenis Publikasi</label>
-                <select id="publication_type" name="publication_type" required>
+                <select id="publication_type" name="publication_type">
                   <option value="">-- Pilih Jenis Publikasi --</option>
-                  <option value="Jurnal">Jurnal</option>
-                  <option value="Prosiding">Prosiding</option>
-                  <option value="Buku">Buku</option>
-                  <option value="Artikel Media Massa">Artikel Media Massa</option>
+                  <option value="Jurnal" <%= publikasi.publication_type === 'Jurnal' ? 'selected' : '' %>>Jurnal</option>
+                  <option value="Prosiding" <%= publikasi.publication_type === 'Prosiding' ? 'selected' : '' %>>Prosiding</option>
+                  <option value="Buku" <%= publikasi.publication_type === 'Buku' ? 'selected' : '' %>>Buku</option>
+                  <option value="Artikel Media Massa" <%= publikasi.publication_type === 'Artikel Media Massa' ? 'selected' : '' %>>Artikel Media Massa</option>
                 </select>
               </div>
 
               <div class="grid gap-2">
                 <label for="publication_date">Tanggal Publikasi</label>
-                <input type="date" id="publication_date" name="publication_date" required/>
+                <input type="date" id="publication_date" name="publication_date"
+                  value="<%= publikasi.publication_date ? new Date(publikasi.publication_date).toISOString().split('T')[0] : '' %>" required/>
               </div>
 
               <div class="grid gap-2">
                 <label for="doi">DOI</label>
-                <input type="text" id="doi" name="doi" placeholder="Contoh: 10.1234/nama.tahun.001" pattern="^10\.\d{4,}\/\S+$" title="Format DOI harus diawali 10. contoh: 10.1234/abc.001"/>
+                <input type="text" id="doi" name="doi" value="<%= publikasi.doi || '' %>"
+                  placeholder="Contoh: 10.1234/nama.tahun.001"
+                  pattern="^10\.\d{4,}\/\S+$"
+                  title="Format DOI harus diawali 10. contoh: 10.1234/abc.001"/>
               </div>
 
               <div class="grid gap-2">
                 <label for="url">URL Publikasi</label>
-                <input type="url" id="url" name="url" placeholder="Contoh: https://journal.unand.ac.id/artikel"/>
+                <input type="url" id="url" name="url" value="<%= publikasi.url || '' %>"
+                  placeholder="Contoh: https://journal.unand.ac.id/artikel"/>
               </div>
 
               <div class="grid gap-2">
                 <label for="abstract">Abstract</label>
-                <textarea id="abstract" name="abstract" placeholder="Contoh: Penelitian ini membahas pengembangan sistem informasi berbasis web menggunakan ExpressJS dan MySQL..." rows="5"></textarea>
+                <textarea id="abstract" name="abstract" rows="5"
+                  placeholder="Contoh: Penelitian ini membahas pengembangan sistem informasi berbasis web..."><%= publikasi.abstract || '' %></textarea>
               </div>
 
               <footer class="flex items-center gap-3">
-                <button type="submit" class="btn fti-submit-btn">Simpan Publikasi</button>
-                <a href="/publikasi" class="btn-outline">Batal</a>
+                <button type="submit" class="btn fti-submit-btn">Simpan Perubahan</button>
+                <a href="/publikasi/<%= publikasi.id %>" class="btn-outline">Batal</a>
               </footer>
             </form>
           </section>

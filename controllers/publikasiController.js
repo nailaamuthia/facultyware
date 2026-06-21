@@ -1,96 +1,103 @@
 const db = require("../lib/db");
 
+const getUser = (req) => ({
+  name: req.session.username || 'User',
+  email: req.session.email || '',
+  role: req.session.role || 'dosen',
+});
+
 const index = async (req, res, next) => {
   try {
-    const [publikasi] = await db.query(`
-      SELECT * FROM publications
-      ORDER BY id DESC
-    `);
-
-    res.render("publikasi/index", {
-      pageTitle: "Daftar Publikasi",
-      user: req.session.user,
-      publikasi,
-    });
-  } catch (err) {
-    next(err);
-  }
+    const [publikasi] = await db.query(`SELECT * FROM publications ORDER BY id DESC`);
+    res.render("publikasi/index", { pageTitle: "Daftar Publikasi", user: getUser(req), publikasi });
+  } catch (err) { next(err); }
 };
 
 const create = (req, res) => {
-  res.render("publikasi/create", {
-    pageTitle: "Tambah Publikasi",
-    user: req.session.user,
-    error: null,
-  });
+  res.render("publikasi/create", { pageTitle: "Tambah Publikasi", user: getUser(req), error: null });
 };
 
 const store = async (req, res, next) => {
   try {
-    const { title, publication_date, doi, url, abstract } = req.body;
-
+    const { title, publication_type, publication_date, doi, url, abstract } = req.body;
     if (!title || !publication_date) {
       return res.render("publikasi/create", {
-        pageTitle: "Tambah Publikasi",
-        user: req.session.user,
+        pageTitle: "Tambah Publikasi", user: getUser(req),
         error: "Judul dan tanggal publikasi wajib diisi.",
       });
     }
-
     await db.query(
-      `
-      INSERT INTO publications
-      (title, publication_date, doi, url, abstract)
-      VALUES (?, ?, ?, ?, ?)
-      `,
-      [
-        title,
-        publication_date,
-        doi || null,
-        url || null,
-        abstract || null,
-      ]
+      `INSERT INTO publications (title, publication_type, publication_date, doi, url, abstract) VALUES (?, ?, ?, ?, ?, ?)`,
+      [title, publication_type || null, publication_date, doi || null, url || null, abstract || null]
     );
-
     res.redirect("/publikasi");
-  } catch (err) {
-    next(err);
-  }
+  } catch (err) { next(err); }
 };
 
 const show = async (req, res, next) => {
   try {
+    const [rows] = await db.query(`SELECT * FROM publications WHERE id = ?`, [req.params.id]);
+    if (rows.length === 0) return res.status(404).render("error", { pageTitle: "Tidak Ditemukan", user: getUser(req), message: "Data publikasi tidak ditemukan." });
+    res.render("publikasi/detail", { pageTitle: "Detail Publikasi", user: getUser(req), publikasi: rows[0] });
+  } catch (err) { next(err); }
+};
+
+const edit = async (req, res, next) => {
+  try {
+    const [rows] = await db.query(`SELECT * FROM publications WHERE id = ?`, [req.params.id]);
+    if (rows.length === 0) return res.status(404).render("error", { pageTitle: "Tidak Ditemukan", user: getUser(req), message: "Data publikasi tidak ditemukan." });
+    res.render("publikasi/edit", { pageTitle: "Edit Publikasi", user: getUser(req), publikasi: rows[0], error: null });
+  } catch (err) { next(err); }
+};
+
+const update = async (req, res, next) => {
+  try {
+    const { title, publication_type, publication_date, doi, url, abstract } = req.body;
     const { id } = req.params;
-
-    const [rows] = await db.query(
-      `
-      SELECT * FROM publications
-      WHERE id = ?
-      `,
-      [id]
-    );
-
-    if (rows.length === 0) {
-      return res.status(404).render("error", {
-        pageTitle: "Publikasi Tidak Ditemukan",
-        user: req.session.user,
-        message: "Data publikasi tidak ditemukan.",
+    if (!title || !publication_date) {
+      const [rows] = await db.query(`SELECT * FROM publications WHERE id = ?`, [id]);
+      return res.render("publikasi/edit", {
+        pageTitle: "Edit Publikasi", user: getUser(req),
+        publikasi: rows[0], error: "Judul dan tanggal publikasi wajib diisi.",
       });
     }
+    await db.query(
+      `UPDATE publications SET title=?, publication_type=?, publication_date=?, doi=?, url=?, abstract=?, updated_at=NOW() WHERE id=?`,
+      [title, publication_type || null, publication_date, doi || null, url || null, abstract || null, id]
+    );
+    res.redirect("/publikasi/" + id);
+  } catch (err) { next(err); }
+};
 
-    res.render("publikasi/detail", {
-      pageTitle: "Detail Publikasi",
-      user: req.session.user,
-      publikasi: rows[0],
+const destroy = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const [rows] = await db.query(`SELECT * FROM publications WHERE id = ?`, [id]);
+    if (rows.length === 0) return res.status(404).render("error", {
+      pageTitle: "Tidak Ditemukan", user: getUser(req), message: "Data publikasi tidak ditemukan."
     });
+    await db.query(`DELETE FROM publications WHERE id = ?`, [id]);
+    res.redirect("/publikasi");
+  } catch (err) { next(err); }
+};
+
+const apiGetAll = async (req, res, next) => {
+  try {
+    const [publikasi] = await db.query(`SELECT * FROM publications ORDER BY id DESC`);
+    res.json({ status: "success", total: publikasi.length, data: publikasi });
   } catch (err) {
-    next(err);
+    res.status(500).json({ status: "error", message: err.message });
   }
 };
 
-module.exports = {
-  index,
-  create,
-  store,
-  show,
+const apiGetById = async (req, res, next) => {
+  try {
+    const [rows] = await db.query(`SELECT * FROM publications WHERE id = ?`, [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ status: "error", message: "Publikasi tidak ditemukan." });
+    res.json({ status: "success", data: rows[0] });
+  } catch (err) {
+    res.status(500).json({ status: "error", message: err.message });
+  }
 };
+
+module.exports = { index, create, store, show, edit, update, destroy, apiGetAll, apiGetById };

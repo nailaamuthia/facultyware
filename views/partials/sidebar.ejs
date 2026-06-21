@@ -1,8 +1,8 @@
 <style>
   #sidebar {
-    background-color: #fcfdfc !important;
-    border-right: 1px solid #e0e8e3 !important;
-    box-shadow: 4px 0 15px rgba(0, 107, 53, 0.03) !important;
+    background-color: #fafbfc !important;
+    border-right: 1px solid #e2e5eb !important;
+    box-shadow: 4px 0 15px rgba(61, 70, 88, 0.04) !important;
   }
 
   #sidebar nav > header a,
@@ -13,28 +13,28 @@
   #sidebar footer button,
   #sidebar footer button span,
   #sidebar footer .text-muted-foreground {
-    color: #1a2e22 !important;
+    color: #2d3343 !important;
   }
 
   #sidebar section a svg {
-    color: #4a6353 !important;
-    stroke: #4a6353 !important;
+    color: #6d7898 !important;
+    stroke: #6d7898 !important;
   }
 
   #sidebar section a:hover {
-    background-color: #e8f0eb !important;
+    background-color: #eaf4ee !important;
   }
 
   #sidebar section a[aria-current="page"] {
-    background-color: #e8f0eb !important;
-    border-left: 3px solid #006B35 !important;
+    background-color: #eaf4ee !important;
+    border-left: 3px solid #008B4B !important;
     font-weight: 600 !important;
   }
 
   #sidebar section a[aria-current="page"] span,
   #sidebar section a[aria-current="page"] svg {
-    color: #006B35 !important;
-    stroke: #006B35 !important;
+    color: #00713c !important;
+    stroke: #00713c !important;
   }
 
   .dark #sidebar {
@@ -50,8 +50,8 @@
 
   .dark #sidebar section a svg,
   .dark #sidebar nav > header a svg {
-    color: #cbd5e1 !important;
-    stroke: #cbd5e1 !important;
+    color: #9ba4b8 !important;
+    stroke: #9ba4b8 !important;
     fill: none !important;
   }
 
@@ -61,13 +61,13 @@
 
   .dark #sidebar section a[aria-current="page"] {
     background-color: #1e293b !important;
-    border-left: 3px solid #38bdf8 !important;
+    border-left: 3px solid #34d399 !important;
   }
 
   .dark #sidebar section a[aria-current="page"] span,
   .dark #sidebar section a[aria-current="page"] svg {
-    color: #38bdf8 !important;
-    stroke: #38bdf8 !important;
+    color: #34d399 !important;
+    stroke: #34d399 !important;
   }
 
   /* Popover user di footer */
@@ -93,7 +93,7 @@
   <nav aria-label="Sidebar navigation">
     <header>
       <a href="/home" class="btn-ghost p-2 h-12 w-full justify-start">
-        <div class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg" style="background-color:#006B35;color:white;">
+        <div class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg" style="background:linear-gradient(135deg,#4a5568,#6d7898 65%,#008B4B);color:white;">
           <!-- Heroicon: Academic Cap -->
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/>
@@ -187,7 +187,7 @@
           aria-controls="sidebar-user-popover-popover"
           class="btn-ghost p-2 h-12 w-full flex items-center justify-start"
           data-keep-mobile-sidebar-open="">
-          <div class="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-full font-semibold text-sm" style="background-color:#006B35;color:white;">
+          <div class="bg-primary text-primary-foreground flex aspect-square size-8 items-center justify-center rounded-full font-semibold text-sm" style="background:linear-gradient(135deg,#4a5568,#6d7898 65%,#008B4B);color:white;">
             <%= locals.user ? locals.user.name.charAt(0).toUpperCase() : 'U' %>
           </div>
           <div class="grid flex-1 text-left text-sm leading-tight">

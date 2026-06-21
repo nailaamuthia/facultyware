@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <%# ---- Theme init (harus paling awal) ---- %>
   <script>
     (() => {
       try {
@@ -20,259 +19,274 @@
       });
     })();
   </script>
+  <script>
+    (function () {
+      try {
+        const storedTheme = localStorage.getItem("themeVariant");
+        if (storedTheme) document.documentElement.classList.add(`theme-${storedTheme}`);
+      } catch (e) {}
+    })();
+  </script>
 
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Daftar Publikasi — Sistem Publikasi B14</title>
+  <link rel="stylesheet" href="/assets/styles.css"/>
 
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="/assets/styles.css"/>
 
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--color-background);
+    :root {
+      --fti-navy: #4a5568;
+      --fti-navy-deep: #3d4658;
+      --fti-blue: #6d7898;
+      --fti-grey: #9ba4b8;
     }
 
-    .page-banner {
-      background:
-        radial-gradient(circle at top right, rgba(255,255,255,0.22), transparent 30%),
-        linear-gradient(135deg, #1f2937 0%, #334155 50%, #64748b 100%);
-      border-radius: 20px;
-      padding: 28px 32px;
-      color: white;
-      margin-bottom: 24px;
-      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
+    body { font-family: 'Inter', sans-serif; }
+
+    .fti-page-header {
+      background: linear-gradient(135deg, var(--fti-navy-deep) 0%, var(--fti-blue) 60%, var(--fti-grey) 100%);
+      border-radius: 18px;
+      padding: 26px 28px;
+      color: #fff;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 12px 28px rgba(61, 70, 88, 0.18);
+      margin-bottom: 24px;
     }
 
-    .page-banner::after {
-      content: "PUB";
+    .fti-page-header::after {
+      content: "FTI";
       position: absolute;
-      right: 36px;
-      top: 18px;
-      font-size: 5.8rem;
+      right: 24px;
+      top: 12px;
+      font-size: 4.5rem;
       font-weight: 800;
-      letter-spacing: -6px;
+      letter-spacing: -4px;
       color: rgba(255,255,255,0.08);
+      pointer-events: none;
     }
 
-    .page-badge {
-      display: inline-flex;
-      background: rgba(255,255,255,0.14);
-      border: 1px solid rgba(255,255,255,0.22);
-      padding: 7px 13px;
-      border-radius: 999px;
-      font-size: 0.8rem;
+    .fti-page-header h1 { color: #fff; margin: 0 0 6px; }
+    .fti-page-header p { color: rgba(255,255,255,0.88); margin: 0; }
+
+    .fti-btn-primary {
+      background: #fff;
+      color: #00713c;
+      border: 1.5px solid #008B4B;
       font-weight: 600;
-      margin-bottom: 12px;
     }
+    .fti-btn-primary:hover { background: rgba(255,255,255,0.88); }
 
-    .panel {
-      background: var(--color-card);
-      border: 1px solid var(--color-border);
-      border-radius: 18px;
-      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
-      overflow: hidden;
+    .fti-btn-outline {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.35);
     }
+    .fti-btn-outline:hover { background: rgba(255,255,255,0.2); }
 
-    .panel-header {
-      padding: 20px 22px;
-      border-bottom: 1px solid var(--color-border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .panel-title {
-      margin: 0;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--color-foreground);
-    }
-
-    .panel-desc {
-      margin: 4px 0 0;
-      font-size: 0.84rem;
-      color: var(--color-muted-foreground);
-    }
-
-    .btn-main {
-      background: #475569;
-      color: white;
-      padding: 10px 16px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-size: 0.84rem;
-      font-weight: 700;
+    .fti-type-badge {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-    }
-
-    .btn-main:hover {
-      background: #334155;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      padding: 0;
-    }
-
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.88rem;
-    }
-
-    .data-table thead th {
-      background: var(--color-secondary);
-      color: var(--color-muted-foreground);
-      text-align: left;
-      padding: 14px 18px;
-      font-weight: 700;
-      border-bottom: 1px solid var(--color-border);
-    }
-
-    .data-table tbody td {
-      padding: 15px 18px;
-      border-bottom: 1px solid var(--color-border);
-      color: #334155;
-    }
-
-    .data-table tbody tr:hover {
-      background: var(--color-secondary);
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 60px 24px;
-      color: var(--color-muted-foreground);
-    }
-
-    .empty-icon {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: var(--color-secondary);
-      color: var(--color-muted-foreground);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-    }
-
-    .action-link {
-      font-weight: 700;
-      text-decoration: none;
-      color: var(--color-muted-foreground);
-      margin-right: 12px;
-      font-size: 0.84rem;
-    }
-
-    .action-link:hover {
-      color: var(--color-foreground);
-      text-decoration: underline;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      padding: 4px 10px;
+      padding: 3px 10px;
       border-radius: 999px;
-      background: var(--color-secondary);
-      color: var(--color-muted-foreground);
       font-size: 0.75rem;
-      font-weight: 700;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .fti-type-jurnal { background: rgba(109,120,152,0.14); color: var(--fti-navy-deep); }
+    .fti-type-prosiding { background: rgba(155,164,184,0.2); color: var(--fti-navy); }
+    .fti-type-buku { background: rgba(180,140,90,0.16); color: #92622f; }
+    .fti-type-default { background: var(--color-secondary); color: var(--color-secondary-foreground); }
+
+    .fti-card {
+      border-radius: 16px !important;
+      box-shadow: 0 6px 18px rgba(61, 70, 88, 0.06);
+    }
+
+    table tbody tr:hover {
+      background: rgba(109,120,152,0.05);
     }
   </style>
 </head>
 
 <body>
+  <script>
+    (() => {
+      document.addEventListener("DOMContentLoaded", () => {
+        const sidebar = document.getElementById("sidebar");
+        if (!sidebar) return;
+        const updateCurrentLinks = () => {
+          const currentPath = window.location.pathname.replace(/\/$/, "");
+          sidebar.querySelectorAll("a, button").forEach((item) => {
+            const href = item.getAttribute("href");
+            if (!href) { item.removeAttribute("aria-current"); return; }
+            const url = new URL(href, window.location.origin);
+            const itemPath = url.pathname.replace(/\/$/, "");
+            if (itemPath === currentPath) {
+              item.setAttribute("aria-current", "page");
+            } else {
+              item.removeAttribute("aria-current");
+            }
+          });
+        };
+        updateCurrentLinks();
+      });
+    })();
+  </script>
+
   <%- include('../partials/sidebar') %>
 
   <main id="content">
     <%- include('../partials/topbar', { pageTitle: 'Daftar Publikasi' }) %>
 
-    <div class="p-4 md:p-6" style="max-width:1280px; margin:0 auto;">
+    <div class="p-4 md:p-6">
+      <div class="max-w-screen-lg mx-auto">
 
-      <section class="page-banner">
-        <div style="position:relative;z-index:1;max-width:720px;">
-          <div class="page-badge">Modul Publikasi</div>
-          <h1 style="font-size:1.8rem;font-weight:800;margin:0 0 8px;">
-            Daftar Publikasi Dosen
-          </h1>
-          <p style="margin:0;opacity:0.9;line-height:1.6;">
-            Halaman ini digunakan untuk melihat seluruh data publikasi dosen yang sudah tercatat pada sistem.
-          </p>
-        </div>
-      </section>
+        <!-- Header -->
+        <header class="fti-page-header">
+          <div style="position:relative;z-index:1;">
+            <h1 style="font-size:1.7rem;font-weight:800;">Daftar Publikasi Dosen</h1>
+            <p>Kelola seluruh data publikasi dosen yang tercatat pada sistem.</p>
+            <div class="flex w-full items-center justify-start gap-2" style="margin-top:18px;">
+              <a class="btn fti-btn-primary" href="/publikasi/create">+ Tambah Publikasi</a>
+              <a class="btn-outline fti-btn-outline" href="/publikasi/export/pdf">Export PDF</a>
+              <a class="btn-outline fti-btn-outline" href="/publikasi/import">Import Excel</a>
+            </div>
+          </div>
+        </header>
 
-      <section class="panel">
-        <div class="panel-header">
-          <div>
-            <h2 class="panel-title">Data Publikasi</h2>
-            <p class="panel-desc">Kelola data publikasi, detail publikasi, dan proses pembaruan data.</p>
+        <!-- Tabel Publikasi -->
+        <div class="card fti-card">
+          <header>
+            <h2>Data Publikasi</h2>
+            <p>Kelola data publikasi, detail publikasi, dan proses pembaruan data.</p>
+          </header>
+
+          <!-- Filter & Search -->
+          <div style="padding:16px;border-bottom:1px solid var(--color-border);display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+            <input type="text" id="searchJudul" placeholder="Cari judul publikasi..."
+              oninput="filterTable()"
+              style="flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:0.88rem;background:var(--color-background);color:var(--color-foreground);"/>
+            <select id="filterJenis" onchange="filterTable()"
+              style="padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:0.88rem;background:var(--color-background);color:var(--color-foreground);">
+              <option value="">Semua Jenis</option>
+              <option value="Jurnal">Jurnal</option>
+              <option value="Prosiding">Prosiding</option>
+              <option value="Buku">Buku</option>
+              <option value="Artikel Media Massa">Artikel Media Massa</option>
+            </select>
+            <select id="filterTahun" onchange="filterTable()"
+              style="padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:0.88rem;background:var(--color-background);color:var(--color-foreground);">
+              <option value="">Semua Tahun</option>
+              <% const tahunList = [...new Set(publikasi.map(p => p.publication_date ? new Date(p.publication_date).getFullYear() : null).filter(Boolean))].sort((a,b) => b-a); %>
+              <% tahunList.forEach(t => { %><option value="<%= t %>"><%= t %></option><% }) %>
+            </select>
           </div>
 
-          <a href="/publikasi/create" class="btn-main">
-            + Tambah Publikasi
-          </a>
-        </div>
-
-        <div class="table-wrap">
-          <% if (publikasi.length === 0) { %>
-            <div class="empty-state">
-              <div class="empty-icon">
-                <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <section>
+            <% if (publikasi.length === 0) { %>
+              <div class="flex flex-col items-center justify-center py-16 gap-4 text-muted-foreground">
+                <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                   <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
                   <polyline points="14 2 14 8 20 8"/>
                 </svg>
+                <div class="text-center">
+                  <p class="font-medium text-foreground">Belum Ada Data Publikasi</p>
+                  <p class="text-sm">Tambahkan data publikasi pertama sekarang.</p>
+                </div>
+                <a href="/publikasi/create" class="btn">Tambah Publikasi</a>
               </div>
-              <h3 style="margin:0 0 6px;color:#334155;">Belum Ada Data Publikasi</h3>
-              <p style="margin:0 0 18px;">Data publikasi belum tersedia. Tambahkan data publikasi pertama sekarang.</p>
-              <a href="/publikasi/create" class="btn-main">Tambah Publikasi</a>
-            </div>
-          <% } else { %>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Judul Publikasi</th>
-                  <th>Tahun</th>
-                  <th>Status</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <% publikasi.forEach((item, index) => { %>
-                  <tr>
-                    <td><%= index + 1 %></td>
-                    <td style="font-weight:700;color:var(--color-foreground);">
-                      <%= item.title || item.judul || '-' %>
-                    </td>
-                    <td><%= item.year || item.tahun || '-' %></td>
-                    <td>
-                      <span class="status-badge"><%= item.status || '-' %></span>
-                    </td>
-                    <td>
-                      <a href="/publikasi/<%= item.id %>" class="action-link">Detail</a>
-                      <a href="#" class="action-link">Edit</a>
-                    </td>
+            <% } else { %>
+              <table style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+                <thead>
+                  <tr style="border-bottom:1px solid var(--color-border);">
+                    <th style="text-align:left;padding:10px 12px;color:var(--color-muted-foreground);font-weight:600;">No</th>
+                    <th style="text-align:left;padding:10px 12px;color:var(--color-muted-foreground);font-weight:600;">Judul Publikasi</th>
+                    <th style="text-align:left;padding:10px 12px;color:var(--color-muted-foreground);font-weight:600;">Jenis</th>
+                    <th style="text-align:left;padding:10px 12px;color:var(--color-muted-foreground);font-weight:600;">Tanggal</th>
+                    <th style="text-align:left;padding:10px 12px;color:var(--color-muted-foreground);font-weight:600;">DOI</th>
+                    <th style="text-align:left;padding:10px 12px;color:var(--color-muted-foreground);font-weight:600;">Aksi</th>
                   </tr>
-                <% }) %>
-              </tbody>
-            </table>
-          <% } %>
+                </thead>
+                <tbody>
+                  <% publikasi.forEach((item, index) => { %>
+                    <tr class="pub-row" data-judul="<%= (item.title || '').toLowerCase() %>" data-jenis="<%= item.publication_type || '' %>" data-tahun="<%= item.publication_date ? new Date(item.publication_date).getFullYear() : '' %>" style="border-bottom:1px solid var(--color-border);">
+                      <td style="padding:12px;color:var(--color-muted-foreground);"><%= index + 1 %></td>
+                      <td style="padding:12px;font-weight:600;color:var(--color-foreground);"><%= item.title || '-' %></td>
+                      <td style="padding:12px;">
+                        <% const jenis = (item.publication_type || '').toLowerCase(); %>
+                        <% if (jenis === 'jurnal') { %>
+                          <span class="fti-type-badge fti-type-jurnal">Jurnal</span>
+                        <% } else if (jenis === 'prosiding') { %>
+                          <span class="fti-type-badge fti-type-prosiding">Prosiding</span>
+                        <% } else if (jenis === 'buku') { %>
+                          <span class="fti-type-badge fti-type-buku">Buku</span>
+                        <% } else if (item.publication_type) { %>
+                          <span class="fti-type-badge fti-type-default"><%= item.publication_type %></span>
+                        <% } else { %>
+                          <span style="color:var(--color-muted-foreground);">-</span>
+                        <% } %>
+                      </td>
+                      <td style="padding:12px;color:var(--color-muted-foreground);"><%= item.publication_date ? new Date(item.publication_date).toLocaleDateString('id-ID') : '-' %></td>
+                      <td style="padding:12px;color:var(--color-muted-foreground);font-size:0.8rem;"><%= item.doi || '-' %></td>
+                      <td style="padding:12px;">
+                        <div style="display:flex;align-items:center;gap:6px;">
+                          <!-- Detail -->
+                          <a href="/publikasi/<%= item.id %>" data-tooltip="Detail" class="btn-sm-icon-ghost" style="color:var(--color-muted-foreground);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                          </a>
+                          <!-- Edit -->
+                          <a href="/publikasi/<%= item.id %>/edit" data-tooltip="Edit" class="btn-sm-icon-ghost" style="color:var(--color-muted-foreground);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                          </a>
+                          <!-- Hapus -->
+                          <form action="/publikasi/<%= item.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus publikasi ini?');">
+                            <button type="submit" data-tooltip="Hapus" class="btn-sm-icon-ghost" style="color:#ef4444;">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            <% } %>
+          </section>
         </div>
-      </section>
 
+      </div>
     </div>
   </main>
 
+  <div id="toaster" class="toaster"></div>
+  
+  <script>
+    function filterTable() {
+      const judul = document.getElementById('searchJudul').value.toLowerCase();
+      const jenis = document.getElementById('filterJenis').value.toLowerCase();
+      const tahun = document.getElementById('filterTahun').value;
+      const rows = document.querySelectorAll('.pub-row');
+      let visible = 0;
+      rows.forEach(row => {
+        const matchJudul = row.dataset.judul.includes(judul);
+        const matchJenis = !jenis || row.dataset.jenis.toLowerCase() === jenis;
+        const matchTahun = !tahun || row.dataset.tahun === tahun;
+        if (matchJudul && matchJenis && matchTahun) {
+          row.style.display = '';
+          visible++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      const emptyMsg = document.getElementById('empty-filter');
+      if (emptyMsg) emptyMsg.style.display = visible === 0 ? '' : 'none';
+    }
+  </script>
   <script src="/assets/js/basecoat.js" defer></script>
   <script src="/assets/js/sidebar.js" defer></script>
   <script src="/assets/js/popover.js" defer></script>
