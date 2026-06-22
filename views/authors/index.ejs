@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("themeMode");
+        if (stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches) {
+          document.documentElement.classList.add("dark");
+        }
+      } catch (_) {}
+      const apply = (dark) => {
+        document.documentElement.classList.toggle("dark", dark);
+        try { localStorage.setItem("themeMode", dark ? "dark" : "light"); } catch (_) {}
+      };
+      document.addEventListener("basecoat:theme", (event) => {
+        const mode = event.detail?.mode;
+        apply(mode === "dark" ? true : mode === "light" ? false : !document.documentElement.classList.contains("dark"));
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      try {
+        const storedTheme = localStorage.getItem("themeVariant");
+        if (storedTheme) document.documentElement.classList.add(`theme-${storedTheme}`);
+      } catch (e) {}
+    })();
+  </script>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Daftar Penulis Publikasi — Sistem Publikasi B14</title>
+  <link rel="stylesheet" href="/assets/styles.css"/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --fti-navy: #4a5568;
+      --fti-navy-deep: #3d4658;
+      --fti-blue: #6d7898;
+      --fti-grey: #9ba4b8;
+    }
+
+    body { font-family: 'Inter', sans-serif; }
+
+    .fti-page-header {
+      background: linear-gradient(135deg, var(--fti-navy-deep) 0%, var(--fti-blue) 60%, var(--fti-grey) 100%);
+      border-radius: 18px;
+      padding: 26px 28px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(61, 70, 88, 0.18);
+      margin-bottom: 24px;
+    }
+
+    .fti-page-header::after {
+      content: "FTI";
+      position: absolute;
+      right: 24px;
+      top: 12px;
+      font-size: 4.5rem;
+      font-weight: 800;
+      letter-spacing: -4px;
+      color: rgba(255,255,255,0.08);
+      pointer-events: none;
+    }
+
+    .fti-page-header h1 { color: #fff; margin: 0 0 6px; }
+    .fti-page-header p { color: rgba(255,255,255,0.88); margin: 0; }
+
+    .fti-btn-primary {
+      background: #fff;
+      color: #00713c;
+      border: 1.5px solid #008B4B;
+      font-weight: 600;
+    }
+    .fti-btn-primary:hover { background: rgba(255,255,255,0.88); }
+
+    .fti-btn-outline {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.35);
+    }
+    .fti-btn-outline:hover { background: rgba(255,255,255,0.2); }
+
+    .fti-badge-institution {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(109,120,152,0.14);
+      color: var(--fti-navy-deep);
+      white-space: nowrap;
+    }
+
+    .fti-card {
+      border-radius: 16px !important;
+      box-shadow: 0 6px 18px rgba(61, 70, 88, 0.06);
+    }
+
+    table tbody tr:hover {
+      background: rgba(109,120,152,0.05);
+    }
+
+    .badge-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #008B4B;
+      color: white;
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    (() => {
+      document.addEventListener("DOMContentLoaded", () => {
+        const sidebar = document.getElementById("sidebar");
+        if (!sidebar) return;
+        const updateCurrentLinks = () => {
+          const currentPath = window.location.pathname.replace(/\/$/, "");
+          sidebar.querySelectorAll("a, button").forEach((item) => {
+            const href = item.getAttribute("href");
+            if (!href) { item.removeAttribute("aria-current"); return; }
+            const url = new URL(href, window.location.origin);
+            const itemPath = url.pathname.replace(/\/$/, "");
+            if (itemPath === currentPath) {
+              item.setAttribute("aria-current", "page");
+            } else {
+              item.removeAttribute("aria-current");
+            }
+          });
+        };
+        updateCurrentLinks();
+      });
+    })();
+  </script>
+
+  <%- include('../partials/sidebar') %>
+
+  <main id="content">
+    <%- include('../partials/topbar', { pageTitle: 'Daftar Penulis Publikasi' }) %>
+
+    <div class="p-4 md:p-6">
+      <div class="max-w-screen-lg mx-auto">
+
+        <!-- Header -->
+        <header class="fti-page-header">
+          <div style="position:relative;z-index:1;">
+            <h1 style="font-size:1.7rem;font-weight:800;">Daftar Penulis Publikasi</h1>
+            <p>Kelola seluruh data penulis publikasi dosen yang tersimpan dalam sistem.</p>
+            <div class="flex w-full items-center justify-start gap-2" style="margin-top:18px;">
+              <a class="btn fti-btn-primary" href="/authors/create">+ Tambah Penulis</a>
+              <a class="btn-outline fti-btn-outline" href="/authors/export/csv">Export CSV</a>
+              <a class="btn-outline fti-btn-outline" href="/authors/export/excel">Export Excel</a>
+            </div>
+          </div>
+        </header>
+
+        <!-- Tabel Penulis -->
+        <div class="card fti-card">
+          <header>
+            <h2>Data Penulis Publikasi</h2>
+            <p>Kelola data penulis, detail profil, dan publikasi yang terkait.</p>
+          </header>
+
+          <!-- Filter & Search -->
+          <div style="padding:16px;border-bottom:1px solid var(--color-border);display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+            <input type="text" id="searchNama" placeholder="Cari nama penulis..."
+              oninput="filterTable()"
+              style="flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:0.88rem;background:var(--color-background);color:var(--color-foreground);"/>
+            <input type="text" id="searchInstitusi" placeholder="Cari institusi..."
+              oninput="filterTable()"
+              style="flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;font-size:0.88rem;background:var(--color-background);color:var(--color-foreground);"/>
+          </div>
+
+          <section>
+            <% if (authors.length === 0) { %>
+              <div class="flex flex-col items-center justify-center py-16 gap-4 text-muted-foreground">
+                <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <div class="text-center">
+                  <p class="font-medium text-foreground">Belum Ada Data Penulis</p>
+                  <p class="text-sm">Tambahkan data penulis publikasi pertama sekarang.</p>
+                </div>
+                <a href="/authors/create" class="btn">Tambah Penulis</a>
+              </div>
+            <% } else { %>
+              <table style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+                <thead>
+                  <tr style="border-bottom:1px solid var(--color-border);">
+                    <th style="text-align:left;padding:10px 12px;color:var(--color-muted-foreground);font-weight:600;">No</th>
+                    <th style="text-align:left;padding:10px 12px;color:var(--color-muted-foreground);font-weight:600;">Nama Penulis</th>
+                    <th style="text-align:left;padding:10px 12px;color:var(--color-muted-foreground);font-weight:600;">Email</th>
+                    <th style="text-align:left;padding:10px 12px;color:var(--color-muted-foreground);font-weight:600;">Institusi</th>
+                    <th style="text-align:left;padding:10px 12px;color:var(--color-muted-foreground);font-weight:600;">Publikasi</th>
+                    <th style="text-align:left;padding:10px 12px;color:var(--color-muted-foreground);font-weight:600;">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% authors.forEach((item, index) => { %>
+                    <tr class="author-row" data-nama="<%= (item.name || '').toLowerCase() %>" data-institusi="<%= (item.institution || '').toLowerCase() %>" style="border-bottom:1px solid var(--color-border);">
+                      <td style="padding:12px;color:var(--color-muted-foreground);"><%= index + 1 %></td>
+                      <td style="padding:12px;font-weight:600;color:var(--color-foreground);"><%= item.name || '-' %></td>
+                      <td style="padding:12px;color:var(--color-muted-foreground);font-size:0.85rem;"><%= item.email || '-' %></td>
+                      <td style="padding:12px;">
+                        <% if (item.institution) { %>
+                          <span class="fti-badge-institution"><%= item.institution %></span>
+                        <% } else { %>
+                          <span style="color:var(--color-muted-foreground);">-</span>
+                        <% } %>
+                      </td>
+                      <td style="padding:12px;">
+                        <span class="badge-count"><%= item.publication_count || 0 %></span>
+                      </td>
+                      <td style="padding:12px;">
+                        <div style="display:flex;align-items:center;gap:6px;">
+                          <!-- Detail -->
+                          <a href="/authors/<%= item.id %>" data-tooltip="Detail" class="btn-sm-icon-ghost" style="color:var(--color-muted-foreground);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                          </a>
+                          <!-- Edit -->
+                          <a href="/authors/<%= item.id %>/edit" data-tooltip="Edit" class="btn-sm-icon-ghost" style="color:var(--color-muted-foreground);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                          </a>
+                          <!-- Hapus -->
+                          <form action="/authors/<%= item.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus penulis ini?');">
+                            <button type="submit" data-tooltip="Hapus" class="btn-sm-icon-ghost" style="color:#ef4444;">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            <% } %>
+          </section>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function filterTable() {
+      const searchNama = document.getElementById("searchNama").value.toLowerCase();
+      const searchInstitusi = document.getElementById("searchInstitusi").value.toLowerCase();
+      const rows = document.querySelectorAll(".author-row");
+
+      rows.forEach((row) => {
+        const nama = row.getAttribute("data-nama");
+        const institusi = row.getAttribute("data-institusi");
+        
+        const matchNama = !searchNama || nama.includes(searchNama);
+        const matchInstitusi = !searchInstitusi || institusi.includes(searchInstitusi);
+        
+        row.style.display = matchNama && matchInstitusi ? "" : "none";
+      });
+    }
+  </script>
+</body>
+</html>
