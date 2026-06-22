@@ -1,78 +1,38 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
   <head>
     <script>
       (() => {
         try {
           const stored = localStorage.getItem("themeMode");
-          if (
-            stored
-              ? stored === "dark"
-              : matchMedia("(prefers-color-scheme: dark)").matches
-          ) {
+          if (stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches) {
             document.documentElement.classList.add("dark");
           }
         } catch (_) {}
-
         const apply = (dark) => {
           document.documentElement.classList.toggle("dark", dark);
-          try {
-            localStorage.setItem("themeMode", dark ? "dark" : "light");
-          } catch (_) {}
+          try { localStorage.setItem("themeMode", dark ? "dark" : "light"); } catch (_) {}
         };
-
         document.addEventListener("basecoat:theme", (event) => {
           const mode = event.detail?.mode;
-          apply(
-            mode === "dark"
-              ? true
-              : mode === "light"
-                ? false
-                : !document.documentElement.classList.contains("dark"),
-          );
+          apply(mode === "dark" ? true : mode === "light" ? false : !document.documentElement.classList.contains("dark"));
         });
       })();
     </script>
-
     <script>
       (function () {
         try {
           const storedTheme = localStorage.getItem("themeVariant");
-          if (storedTheme)
-            document.documentElement.classList.add(`theme-${storedTheme}`);
-        } catch (event) {
-          console.error(
-            "Could not apply theme variant from localStorage",
-            event,
-          );
-        }
+          if (storedTheme) document.documentElement.classList.add(`theme-${storedTheme}`);
+        } catch (event) {}
       })();
     </script>
 
     <meta charset="utf-8" />
-    <meta http-equiv="Content-Language" content="en" />
+    <meta http-equiv="Content-Language" content="id" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>Basecoat</title>
-    <meta
-      name="description"
-      content="A components library built with Tailwind CSS that works with any web stack."
-    />
-    <meta name="title" content="Basecoat" />
-    <meta
-      name="keywords"
-      content="components,component library,component system,UI,UI kit,shadcn,shadcn/ui,Tailwind CSS,Tailwind,CSS,HTML,Jinja,Nunjucks,JS,JavaScript,vanilla JS,vanilla JavaScript"
-    />
-
-    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="/assets/apple-touch-icon.png"
-    />
-
+    <title>Login — Sistem Publikasi FTI Unand</title>
     <link rel="stylesheet" href="/assets/styles.css" />
-
     <script src="/assets/js/basecoat.js?v=0.3.11" defer></script>
     <script src="/assets/js/command.js?v=0.3.11" defer></script>
     <script src="/assets/js/dropdown-menu.js?v=0.3.11" defer></script>
@@ -81,154 +41,114 @@
     <script src="/assets/js/sidebar.js?v=0.3.11" defer></script>
     <script src="/assets/js/tabs.js?v=0.3.11" defer></script>
     <script src="/assets/js/toast.js?v=0.3.11" defer></script>
-
-    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/django.min.js"></script>
-    <script>
-      const highlight = () => {
-        if (!window.hljs) return;
-        document
-          .querySelectorAll(
-            "pre code:not([data-highlighted]), code.highlight:not([data-highlighted])",
-          )
-          .forEach((el) => hljs.highlightElement(el));
-      };
-
-      if (!window._hljsInit) {
-        window._hljsInit = true;
-        document.addEventListener("DOMContentLoaded", highlight);
-        document.addEventListener("htmx:afterSwap", highlight);
-      }
-    </script>
-    <script>
-      document.addEventListener("htmx:historyRestore", () => {
-        if (window.basecoat) window.basecoat.initAll();
-      });
-    </script>
   </head>
-  <body
-    class="bg-background *:data-[slot=card]:has-[[data-slot=chart]]:shadow-none"
-  >
-    <div
-      class="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10"
-    >
-      <div class="w-full max-w-sm md:max-w-4xl">
+  <body class="bg-background">
+    <div class="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
+      <div class="w-full" style="max-width:900px;">
         <div class="flex flex-col gap-6">
-          <div
-            data-slot="card"
-            class="flex flex-col gap-6 rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden p-0"
-          >
-            <div data-slot="card-content" class="grid p-0 md:grid-cols-2">
+          <div data-slot="card" class="flex flex-col gap-6 rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden p-0">
+            <div data-slot="card-content" class="grid p-0" style="grid-template-columns:1fr 1fr;">
+
+              <!-- KIRI: Form Login -->
               <form class="p-6 md:p-8" action="/login" method="POST">
-                <div
-                  data-slot="field-group"
-                  class="group/field-group @container/field-group flex w-full flex-col gap-7 data-[slot=checkbox-group]:gap-3 [&amp;&gt;[data-slot=field-group]]:gap-4"
-                >
-                  <div class="flex flex-col items-center gap-2 text-center">
-                    <h1 class="text-2xl font-bold">Welcome back</h1>
-                    <p class="text-balance text-muted-foreground">
-                      Login to your account
-                    </p>
+                <div data-slot="field-group" class="group/field-group @container/field-group flex w-full flex-col gap-7">
+
+                  <!-- Logo + Judul -->
+                  <div class="flex flex-col items-center gap-3 text-center">
+                    <div class="flex items-center gap-3 mb-1">
+                      <img src="/assets/images/logo-unand.png" alt="Unand" style="height:40px;width:auto;" onerror="this.style.display='none'"/>
+                      <img src="/assets/images/logo-fti.png" alt="FTI" style="height:40px;width:auto;" onerror="this.style.display='none'"/>
+                    </div>
+                    <div>
+                      <h1 class="text-2xl font-bold" style="color:#006B35;">Sistem Publikasi Dosen</h1>
+                      <p class="text-sm font-medium" style="color:#6D7898;">Fakultas Teknologi Informasi · Universitas Andalas</p>
+                    </div>
+                    <p class="text-balance text-muted-foreground text-sm">Masuk ke akun Anda untuk melanjutkan</p>
                   </div>
-                  
+
                   <% if (error) { %>
                     <div class="bg-destructive/15 text-destructive text-sm p-3 rounded-md border border-destructive/20 text-center">
                       <%= error %>
                     </div>
                   <% } %>
 
-                  <div
-                    role="group"
-                    data-slot="field"
-                    data-orientation="vertical"
-                    class="group/field flex w-full gap-3 data-[invalid=true]:text-destructive flex-col [&amp;&gt;*]:w-full [&amp;&gt;.sr-only]:w-auto"
-                  >
-                    <label
-                      data-slot="field-label"
-                      class="items-center text-sm font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[&gt;[data-slot=field]]:w-full has-[&gt;[data-slot=field]]:flex-col has-[&gt;[data-slot=field]]:rounded-md has-[&gt;[data-slot=field]]:border [&amp;&gt;*]:data-[slot=field]:p-4 has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/5 dark:has-data-[state=checked]:bg-primary/10"
-                      for="username"
-                      >Username</label
-                    ><input
-                      type="text"
-                      name="username"
-                      data-slot="input"
-                      class="h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40"
-                      id="username"
-                      placeholder="admin"
-                      required=""
-                    />
+                  <!-- Username -->
+                  <div role="group" data-slot="field" data-orientation="vertical" class="group/field flex w-full gap-3 data-[invalid=true]:text-destructive flex-col [&>*]:w-full">
+                    <label data-slot="field-label" class="items-center text-sm font-medium select-none group/field-label peer/field-label flex w-fit gap-2 leading-snug" for="username">Username</label>
+                    <input type="text" name="username" data-slot="input"
+                      class="h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground md:text-sm focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                      id="username" placeholder="Masukkan username" required/>
                   </div>
-                  <div
-                    role="group"
-                    data-slot="field"
-                    data-orientation="vertical"
-                    class="group/field flex w-full gap-3 data-[invalid=true]:text-destructive flex-col [&amp;&gt;*]:w-full [&amp;&gt;.sr-only]:w-auto"
-                  >
+
+                  <!-- Password -->
+                  <div role="group" data-slot="field" data-orientation="vertical" class="group/field flex w-full gap-3 data-[invalid=true]:text-destructive flex-col [&>*]:w-full">
                     <div class="flex items-center">
-                      <label
-                        data-slot="field-label"
-                        class="items-center text-sm font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[&gt;[data-slot=field]]:w-full has-[&gt;[data-slot=field]]:flex-col has-[&gt;[data-slot=field]]:rounded-md has-[&gt;[data-slot=field]]:border [&amp;&gt;*]:data-[slot=field]:p-4 has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/5 dark:has-data-[state=checked]:bg-primary/10"
-                        for="password"
-                        >Password</label
-                      ><a
-                        href="#"
-                        class="ml-auto text-sm underline-offset-2 hover:underline"
-                        >Forgot your password?</a
-                      >
+                      <label data-slot="field-label" class="items-center text-sm font-medium select-none group/field-label peer/field-label flex w-fit gap-2 leading-snug" for="password">Password</label>
+                      <a href="#" class="ml-auto text-sm underline-offset-2 hover:underline" style="color:#6D7898;">Lupa password?</a>
                     </div>
-                    <input
-                      type="password"
-                      name="password"
-                      data-slot="input"
-                      class="h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40"
-                      id="password"
-                      required=""
-                    />
+                    <input type="password" name="password" data-slot="input"
+                      class="h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground md:text-sm focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                      id="password" placeholder="Masukkan password" required/>
                   </div>
-                  <div
-                    role="group"
-                    data-slot="field"
-                    data-orientation="vertical"
-                    class="group/field flex w-full gap-3 data-[invalid=true]:text-destructive flex-col [&amp;&gt;*]:w-full [&amp;&gt;.sr-only]:w-auto"
-                  >
-                    <button
-                      data-slot="button"
-                      data-variant="default"
-                      data-size="default"
-                      class="inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&amp;_svg]:pointer-events-none [&amp;_svg]:shrink-0 [&amp;_svg:not([class*='size-'])]:size-4 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 has-[&gt;svg]:px-3"
-                      type="submit"
-                    >
+
+                  <!-- Tombol Login -->
+                  <div role="group" data-slot="field" data-orientation="vertical" class="group/field flex w-full gap-3 flex-col [&>*]:w-full">
+                    <button data-slot="button" type="submit"
+                      class="inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:ring-[3px] h-9 px-4 py-2 text-white"
+                      style="background-color:#006B35;">
                       Login
                     </button>
                   </div>
 
-                  <p
-                    data-slot="field-description"
-                    class="text-sm leading-normal font-normal text-muted-foreground group-has-[[data-orientation=horizontal]]/field:text-balance last:mt-0 nth-last-2:-mt-1 [[data-variant=legend]+&amp;]:-mt-1.5 [&amp;&gt;a]:underline [&amp;&gt;a]:underline-offset-4 [&amp;&gt;a:hover]:text-primary text-center"
-                  >
-                    Don't have an account? <a href="#">Sign up</a>
+                  <p class="text-sm text-muted-foreground text-center">
+                    By clicking continue, you agree to our
+                    <a href="#" class="underline underline-offset-4" style="color:#6D7898;">Terms of Service</a>
+                    and <a href="#" class="underline underline-offset-4" style="color:#6D7898;">Privacy Policy</a>.
                   </p>
                 </div>
               </form>
-              <div class="relative hidden bg-muted md:block">
-                <img
-                  src="/assets/images/placeholder.svg"
-                  alt="Image"
-                  class="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-                />
+
+              <!-- KANAN: Identitas FTI Unand -->
+              <div class="relative flex flex-col items-center justify-center p-8 text-white"
+                style="background: linear-gradient(135deg, #006B35 0%, #004d26 40%, #6D7898 100%);">
+                
+                <!-- Dekorasi lingkaran -->
+                <div style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.05);"></div>
+                <div style="position:absolute;bottom:-60px;left:-60px;width:250px;height:250px;border-radius:50%;background:rgba(255,255,255,0.04);"></div>
+                <div style="position:absolute;top:50%;right:20px;width:100px;height:100px;border-radius:50%;background:rgba(157,186,184,0.1);transform:translateY(-50%);"></div>
+
+                <div style="position:relative;z-index:1;text-align:center;">
+                  <!-- Logo Unand besar -->
+                  <img src="/assets/images/logo-unand.png" alt="Universitas Andalas"
+                    style="height:90px;width:auto;margin:0 auto 20px;filter:brightness(0) invert(1);opacity:0.9;"
+                    onerror="this.style.display='none'"/>
+
+                  <h2 style="font-size:1.3rem;font-weight:800;margin:0 0 4px;letter-spacing:0.5px;">
+                    Fakultas Teknologi Informasi
+                  </h2>
+                  <p style="font-size:0.95rem;margin:0 0 24px;opacity:0.85;font-weight:500;">
+                    Universitas Andalas
+                  </p>
+
+                  <!-- Garis pemisah -->
+                  <div style="width:60px;height:3px;background:rgba(255,255,255,0.4);margin:0 auto 24px;border-radius:2px;"></div>
+
+                  <h3 style="font-size:1rem;font-weight:700;margin:0 0 8px;">
+                    Sistem Publikasi Dosen
+                  </h3>
+                  <p style="font-size:0.82rem;opacity:0.8;line-height:1.6;max-width:220px;margin:0 auto;">
+                    Platform pengelolaan data publikasi ilmiah dosen FTI Universitas Andalas
+                  </p>
+
+                  <!-- Badge kelompok -->
+                  <div style="margin-top:28px;display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:6px 16px;">
+                    <span style="font-size:0.78rem;font-weight:600;">Kelompok B14 · PWEB 2025/2026</span>
+                  </div>
+                </div>
               </div>
+
             </div>
           </div>
-          <p
-            data-slot="field-description"
-            class="text-sm leading-normal font-normal text-muted-foreground group-has-[[data-orientation=horizontal]]/field:text-balance last:mt-0 nth-last-2:-mt-1 [[data-variant=legend]+&amp;]:-mt-1.5 [&amp;&gt;a]:underline [&amp;&gt;a]:underline-offset-4 [&amp;&gt;a:hover]:text-primary px-6 text-center"
-          >
-            By clicking continue, you agree to our
-            <a href="#">Terms of Service</a>
-            <!-- -->and <a href="#">Privacy Policy</a>.
-          </p>
         </div>
       </div>
     </div>

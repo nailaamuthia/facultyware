@@ -1,0 +1,214 @@
+<style>
+  #sidebar {
+    background-color: #fafbfc !important;
+    border-right: 1px solid #e2e5eb !important;
+    box-shadow: 4px 0 15px rgba(61, 70, 88, 0.04) !important;
+  }
+
+  #sidebar nav > header a,
+  #sidebar nav > header a span,
+  #sidebar section h3,
+  #sidebar section a,
+  #sidebar section a span,
+  #sidebar footer .text-muted-foreground {
+    color: #2d3343 !important;
+  }
+
+  #sidebar section a svg {
+    color: #6d7898 !important;
+    stroke: #6d7898 !important;
+  }
+
+  #sidebar section a:hover {
+    background-color: #eaf4ee !important;
+  }
+
+  #sidebar section a[aria-current="page"] {
+    background-color: #eaf4ee !important;
+    border-left: 3px solid #008B4B !important;
+    font-weight: 600 !important;
+  }
+
+  #sidebar section a[aria-current="page"] span,
+  #sidebar section a[aria-current="page"] svg {
+    color: #00713c !important;
+    stroke: #00713c !important;
+  }
+
+  .dark #sidebar {
+    background-color: #0f172a !important;
+    border-right: 1px solid #1e293b !important;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  .dark #sidebar * {
+    color: #e5e7eb !important;
+    stroke: #e5e7eb !important;
+  }
+
+  .dark #sidebar section a svg,
+  .dark #sidebar nav > header a svg {
+    color: #9ba4b8 !important;
+    stroke: #9ba4b8 !important;
+    fill: none !important;
+  }
+
+  .dark #sidebar section a:hover {
+    background-color: #1e293b !important;
+  }
+
+  .dark #sidebar section a[aria-current="page"] {
+    background-color: #1e293b !important;
+    border-left: 3px solid #34d399 !important;
+  }
+
+  .dark #sidebar section a[aria-current="page"] span,
+  .dark #sidebar section a[aria-current="page"] svg {
+    color: #34d399 !important;
+    stroke: #34d399 !important;
+  }
+
+  /* Footer user row */
+  #sidebar-footer-user {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    width: 100%;
+  }
+
+  #sidebar-logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.375rem;
+    border-radius: 0.375rem;
+    color: #ef4444;
+    flex-shrink: 0;
+    transition: background 0.15s;
+    text-decoration: none;
+  }
+
+  #sidebar-logout-btn:hover {
+    background-color: #fee2e2;
+  }
+
+  .dark #sidebar-logout-btn {
+    color: #f87171 !important;
+  }
+
+  .dark #sidebar-logout-btn:hover {
+    background-color: #3f1f1f !important;
+  }
+
+  .dark #sidebar-logout-btn svg {
+    stroke: #f87171 !important;
+  }
+</style>
+
+<aside id="sidebar" class="sidebar" data-side="left" aria-hidden="false">
+  <nav aria-label="Sidebar navigation">
+    <header>
+      <a href="/home" class="btn-ghost p-2 h-12 w-full justify-start">
+        <div class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg" style="background:linear-gradient(135deg,#4a5568,#6d7898 65%,#008B4B);color:white;">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.84 4.945v3.477l-7 3.5-7-3.5v-3.477a12.083 12.083 0 01.84-4.945L12 14z"/>
+          </svg>
+        </div>
+        <div class="grid flex-1 text-left text-sm leading-tight">
+          <span class="truncate font-semibold">Sistem Publikasi</span>
+          <span class="truncate text-xs text-muted-foreground">Kelompok B14 · PWEB</span>
+        </div>
+      </a>
+    </header>
+
+    <section class="scrollbar">
+      <!-- Navigasi -->
+      <div role="group">
+        <h3 class="px-2 font-semibold" style="opacity:0.6;">Navigasi</h3>
+        <ul>
+          <li>
+            <a href="/home">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9v9a3 3 0 0 1-3 3h-3v-6h-6v6H6a3 3 0 0 1-3-3v-9z"/>
+              </svg>
+              <span>Home</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Publikasi -->
+      <div role="group">
+        <h3 class="px-2 font-semibold" style="opacity:0.6;margin-top:1rem;">Publikasi</h3>
+        <ul>
+          <li>
+            <a href="/publikasi">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z"/>
+              </svg>
+              <span>Daftar Publikasi</span>
+            </a>
+          </li>
+          <li>
+            <a href="/publikasi/create">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+              </svg>
+              <span>Tambah Publikasi</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pengelolaan -->
+      <div role="group">
+        <h3 class="px-2 font-semibold" style="opacity:0.6;margin-top:1rem;">Pengelolaan</h3>
+        <ul>
+          <li>
+            <a href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A8.966 8.966 0 0112 15c2.386 0 4.566.938 6.121 2.804M12 7a4 4 0 100-8 4 4 0 000 8z"/>
+              </svg>
+              <span>Penulis Publikasi</span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M12 22c5-2 5-10 0-12s-5 10 0 12z"/>
+              </svg>
+              <span>Approval Publikasi</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Footer User: avatar + nama + ikon logout langsung -->
+    <footer>
+      <div id="sidebar-footer-user">
+        <!-- Avatar -->
+        <div style="background:linear-gradient(135deg,#4a5568,#6d7898 65%,#008B4B);color:white;width:2rem;height:2rem;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:0.875rem;flex-shrink:0;">
+          <%= locals.user ? locals.user.name.charAt(0).toUpperCase() : 'U' %>
+        </div>
+        <!-- Nama & Role -->
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:0.875rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            <%= locals.user ? locals.user.name : 'User' %>
+          </div>
+          <div class="text-muted-foreground" style="font-size:0.75rem;text-transform:capitalize;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            <%= locals.user ? locals.user.role : '' %>
+          </div>
+        </div>
+        <!-- Tombol Logout langsung visible -->
+        <a href="/logout" id="sidebar-logout-btn" title="Logout">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#ef4444" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/>
+          </svg>
+        </a>
+      </div>
+    </footer>
+  </nav>
+</aside>

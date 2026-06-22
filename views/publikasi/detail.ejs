@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("themeMode");
+        if (stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches) {
+          document.documentElement.classList.add("dark");
+        }
+      } catch (_) {}
+      const apply = (dark) => {
+        document.documentElement.classList.toggle("dark", dark);
+        try { localStorage.setItem("themeMode", dark ? "dark" : "light"); } catch (_) {}
+      };
+      document.addEventListener("basecoat:theme", (event) => {
+        const mode = event.detail?.mode;
+        apply(mode === "dark" ? true : mode === "light" ? false : !document.documentElement.classList.contains("dark"));
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      try {
+        const storedTheme = localStorage.getItem("themeVariant");
+        if (storedTheme) document.documentElement.classList.add(`theme-${storedTheme}`);
+      } catch (e) {}
+    })();
+  </script>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Detail Publikasi — Sistem Publikasi B14</title>
+  <link rel="stylesheet" href="/assets/styles.css"/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --fti-navy: #4a5568;
+      --fti-navy-deep: #3d4658;
+      --fti-blue: #6d7898;
+      --fti-grey: #9ba4b8;
+    }
+    body { font-family: 'Inter', sans-serif; }
+
+    .fti-page-header {
+      background: linear-gradient(135deg, var(--fti-navy-deep) 0%, var(--fti-blue) 60%, var(--fti-grey) 100%);
+      border-radius: 18px;
+      padding: 26px 28px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(61, 70, 88, 0.18);
+      margin-bottom: 24px;
+    }
+    .fti-page-header::after {
+      content: "FTI";
+      position: absolute;
+      right: 24px;
+      top: 12px;
+      font-size: 4.5rem;
+      font-weight: 800;
+      letter-spacing: -4px;
+      color: rgba(255,255,255,0.08);
+      pointer-events: none;
+    }
+    .fti-page-header h1 { color: #fff; margin: 0 0 6px; }
+    .fti-page-header p { color: rgba(255,255,255,0.88); margin: 0; }
+
+    .fti-btn-primary { background: #fff; color: #00713c; border: 1.5px solid #008B4B; font-weight: 600; }
+    .fti-btn-primary:hover { background: rgba(255,255,255,0.88); }
+    .fti-btn-outline { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.35); }
+    .fti-btn-outline:hover { background: rgba(255,255,255,0.2); }
+    .fti-btn-danger { background: rgba(239,68,68,0.15); color: #fecaca; border: 1px solid rgba(239,68,68,0.4); }
+    .fti-btn-danger:hover { background: rgba(239,68,68,0.25); }
+
+    .fti-type-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .fti-type-jurnal { background: rgba(109,120,152,0.14); color: var(--fti-navy-deep); }
+    .fti-type-prosiding { background: rgba(155,164,184,0.2); color: var(--fti-navy); }
+    .fti-type-buku { background: rgba(180,140,90,0.16); color: #92622f; }
+    .fti-type-default { background: var(--color-secondary); color: var(--color-secondary-foreground); }
+
+    .fti-card { border-radius: 16px !important; box-shadow: 0 6px 18px rgba(61, 70, 88, 0.06); }
+
+    .fti-detail-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--fti-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    (() => {
+      document.addEventListener("DOMContentLoaded", () => {
+        const sidebar = document.getElementById("sidebar");
+        if (!sidebar) return;
+        const updateCurrentLinks = () => {
+          const currentPath = window.location.pathname.replace(/\/$/, "");
+          sidebar.querySelectorAll("a, button").forEach((item) => {
+            const href = item.getAttribute("href");
+            if (!href) { item.removeAttribute("aria-current"); return; }
+            const url = new URL(href, window.location.origin);
+            if (url.pathname.replace(/\/$/, "") === currentPath) {
+              item.setAttribute("aria-current", "page");
+            } else {
+              item.removeAttribute("aria-current");
+            }
+          });
+        };
+        updateCurrentLinks();
+      });
+    })();
+  </script>
+
+  <%- include('../partials/sidebar') %>
+
+  <main id="content">
+    <%- include('../partials/topbar', { pageTitle: 'Detail Publikasi' }) %>
+
+    <div class="p-4 md:p-6">
+      <div class="max-w-screen-lg mx-auto">
+
+        <header class="fti-page-header">
+          <div style="position:relative;z-index:1;">
+            <h1 style="font-size:1.7rem;font-weight:800;">Detail Publikasi</h1>
+            <p>Informasi lengkap data publikasi dosen.</p>
+            <div class="flex items-center gap-2 flex-wrap" style="margin-top:18px;">
+              <a href="/publikasi" class="btn-outline fti-btn-outline">← Kembali</a>
+              <a href="/publikasi/<%= publikasi.id %>/edit" class="btn fti-btn-primary">Edit Publikasi</a>
+              <a href="/publikasi/<%= publikasi.id %>/export/pdf" class="btn-outline fti-btn-outline">Export PDF</a>
+              <form action="/publikasi/<%= publikasi.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus publikasi ini?');">
+                <button type="submit" class="btn-outline fti-btn-danger">Hapus</button>
+              </form>
+            </div>
+          </div>
+        </header>
+
+        <div class="card fti-card">
+          <header>
+            <h2><%= publikasi.title || '-' %></h2>
+          </header>
+          <section>
+            <ul class="grid gap-0">
+
+              <li style="padding:14px 0;border-bottom:1px solid var(--color-border);">
+                <p class="fti-detail-label">Judul Publikasi</p>
+                <p class="font-medium"><%= publikasi.title || '-' %></p>
+              </li>
+
+              <li style="padding:14px 0;border-bottom:1px solid var(--color-border);">
+                <p class="fti-detail-label">Jenis Publikasi</p>
+                <% const jenis = (publikasi.publication_type || '').toLowerCase(); %>
+                <% if (jenis === 'jurnal') { %>
+                  <span class="fti-type-badge fti-type-jurnal">Jurnal</span>
+                <% } else if (jenis === 'prosiding') { %>
+                  <span class="fti-type-badge fti-type-prosiding">Prosiding</span>
+                <% } else if (jenis === 'buku') { %>
+                  <span class="fti-type-badge fti-type-buku">Buku</span>
+                <% } else if (publikasi.publication_type) { %>
+                  <span class="fti-type-badge fti-type-default"><%= publikasi.publication_type %></span>
+                <% } else { %>
+                  <p>-</p>
+                <% } %>
+              </li>
+
+              <li style="padding:14px 0;border-bottom:1px solid var(--color-border);">
+                <p class="fti-detail-label">Tanggal Publikasi</p>
+                <p><%= publikasi.publication_date ? new Date(publikasi.publication_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : '-' %></p>
+              </li>
+
+              <li style="padding:14px 0;border-bottom:1px solid var(--color-border);">
+                <p class="fti-detail-label">DOI</p>
+                <p><%= publikasi.doi || '-' %></p>
+              </li>
+
+              <li style="padding:14px 0;border-bottom:1px solid var(--color-border);">
+                <p class="fti-detail-label">URL Publikasi</p>
+                <p>
+                  <% if (publikasi.url) { %>
+                    <a href="<%= publikasi.url %>" target="_blank" class="underline underline-offset-4"><%= publikasi.url %></a>
+                  <% } else { %>
+                    -
+                  <% } %>
+                </p>
+              </li>
+
+              <li style="padding:14px 0;">
+                <p class="fti-detail-label">Abstrak</p>
+                <p class="leading-relaxed"><%= publikasi.abstract || '-' %></p>
+              </li>
+
+            </ul>
+          </section>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <div id="toaster" class="toaster"></div>
+  <script src="/assets/js/basecoat.js" defer></script>
+  <script src="/assets/js/sidebar.js" defer></script>
+  <script src="/assets/js/popover.js" defer></script>
+  <script src="/assets/js/toast.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <%# ---- Theme init (harus paling awal, sebelum CSS) ---- %>
+  <script>
+    (() => {
+      try {
+        const stored = localStorage.getItem("themeMode");
+        if (stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches) {
+          document.documentElement.classList.add("dark");
+        }
+      } catch (_) {}
+      const apply = (dark) => {
+        document.documentElement.classList.toggle("dark", dark);
+        try { localStorage.setItem("themeMode", dark ? "dark" : "light"); } catch (_) {}
+      };
+      document.addEventListener("basecoat:theme", (event) => {
+        const mode = event.detail?.mode;
+        apply(mode === "dark" ? true : mode === "light" ? false : !document.documentElement.classList.contains("dark"));
+      });
+    })();
+  </script>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dashboard — Sistem Publikasi B14</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/assets/styles.css"/>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--color-background);
+      color: var(--color-foreground);
+    }
+
+    .hero-publikasi {
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,0.22), transparent 32%),
+        linear-gradient(135deg, #1f2937 0%, #334155 48%, #64748b 100%);
+      border-radius: 22px;
+      padding: 34px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 24px;
+      box-shadow: 0 16px 35px rgba(15, 23, 42, 0.18);
+    }
+
+    .hero-publikasi::after {
+      content: "FTI";
+      position: absolute;
+      right: 52px;
+      top: 34px;
+      font-size: 7.2rem;
+      font-weight: 800;
+      letter-spacing: -8px;
+      color: rgba(255,255,255,0.08);
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255,255,255,0.13);
+      border: 1px solid rgba(255,255,255,0.20);
+      backdrop-filter: blur(8px);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .action-btn {
+      background: #475569;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 0.84rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .action-btn:hover {
+      background: #334155;
+    }
+
+    .action-btn-light {
+      background: rgba(255,255,255,0.9);
+      color: #1f2937;
+    }
+
+    .action-btn-light:hover {
+      background: rgba(255,255,255,0.75);
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .quick-card {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: 18px;
+      padding: 20px 22px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+    }
+
+    .quick-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .quick-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .quick-value {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--color-foreground);
+    }
+
+    .quick-label {
+      font-size: 0.84rem;
+      color: var(--color-muted-foreground);
+      margin-left: 2px;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 0.9fr;
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: 18px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-foreground);
+    }
+
+    .panel-desc {
+      margin: 4px 0 0;
+      font-size: 0.82rem;
+      color: var(--color-muted-foreground);
+    }
+
+    .empty-box {
+      text-align: center;
+      padding: 52px 24px;
+      color: var(--color-muted-foreground);
+    }
+
+    .empty-circle {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: var(--color-secondary);
+      color: var(--color-secondary-foreground);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .mini-list {
+      padding: 18px 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .mini-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--color-secondary);
+      border-radius: 14px;
+      border: 1px solid var(--color-border);
+      transition: all .2s ease;
+    }
+
+    .mini-item:hover {
+      background: var(--color-accent);
+      transform: translateY(-2px);
+    }
+
+    .mini-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--color-muted-foreground);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <%- include('partials/sidebar') %>
+
+  <main id="content">
+    <%- include('partials/topbar', { pageTitle: 'Dashboard Publikasi' }) %>
+
+    <div class="p-4 md:p-6" style="max-width:1280px; margin:0 auto;">
+
+      <section class="hero-publikasi">
+        <div style="position:relative;z-index:1;max-width:760px;">
+          <div class="hero-badge">
+            Fakultas Teknologi Informasi · Universitas Andalas
+          </div>
+
+          <h1 style="font-size:2rem;font-weight:800;margin:0 0 10px;">
+            Selamat Datang, <%= user ? user.name : 'Admin' %>
+          </h1>
+
+          <p style="font-size:1rem;opacity:0.92;line-height:1.6;margin:0;">
+            Sistem ini digunakan untuk mengelola data publikasi dosen FTI, mulai dari pendataan publikasi,
+            pengelolaan penulis, hingga kebutuhan export dan API.
+          </p>
+
+          <div style="display:flex;gap:12px;margin-top:22px;">
+            <a href="/publikasi" class="action-btn action-btn-light">Lihat Publikasi</a>
+            <a href="/publikasi/create" class="action-btn">Tambah Publikasi</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="quick-grid">
+        <div class="quick-card">
+          <div class="quick-top">
+            <div class="quick-icon" style="background:rgba(99,102,241,0.15);color:#818cf8;">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/>
+              </svg>
+            </div>
+            <div class="quick-value"><%= stats ? stats.total : 0 %></div>
+          </div>
+          <div class="quick-label">Total Publikasi</div>
+        </div>
+
+        <div class="quick-card">
+          <div class="quick-top">
+            <div class="quick-icon" style="background:rgba(245,158,11,0.15);color:#f59e0b;">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M12 6v6l4 2"/>
+                <circle cx="12" cy="12" r="10"/>
+              </svg>
+            </div>
+            <div class="quick-value"><%= stats ? stats.proposed : 0 %></div>
+          </div>
+          <div class="quick-label">Draft / Menunggu</div>
+        </div>
+
+        <div class="quick-card">
+          <div class="quick-top">
+            <div class="quick-icon" style="background:rgba(59,130,246,0.15);color:#60a5fa;">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M9 12l2 2 4-4"/>
+                <circle cx="12" cy="12" r="10"/>
+              </svg>
+            </div>
+            <div class="quick-value"><%= stats ? stats.completed : 0 %></div>
+          </div>
+          <div class="quick-label">Terpublikasi</div>
+        </div>
+
+        <div class="quick-card">
+          <div class="quick-top">
+            <div class="quick-icon" style="background:rgba(34,197,94,0.15);color:#4ade80;">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+              </svg>
+            </div>
+            <div class="quick-value"><%= totalDosen || 0 %></div>
+          </div>
+          <div class="quick-label">Penulis Terdata</div>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Publikasi Terbaru</h2>
+              <p class="panel-desc">Daftar publikasi yang terakhir dimasukkan ke sistem.</p>
+            </div>
+            <a href="/publikasi" class="action-btn">Lihat Semua</a>
+          </div>
+
+          <div class="empty-box">
+            <div class="empty-circle">
+              <svg width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <h3 style="margin:0 0 6px;color:var(--color-foreground);">Belum Ada Data Publikasi</h3>
+            <p style="margin:0;">Mulai tambahkan data publikasi pertama melalui menu Tambah Publikasi.</p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Fitur Utama Sistem</h2>
+              <p class="panel-desc">Modul yang tersedia pada Sistem Publikasi Dosen FTI.</p>
+            </div>
+          </div>
+
+          <div class="mini-list">
+            <div class="mini-item">
+              <span class="mini-dot"></span>
+              <div><b>Kelola Publikasi</b><br><small>Melihat dan mengelola seluruh data publikasi dosen.</small></div>
+            </div>
+
+            <div class="mini-item">
+              <span class="mini-dot"></span>
+              <div><b>Tambah Data Publikasi</b><br><small>Menambahkan data publikasi baru ke dalam sistem.</small></div>
+            </div>
+
+            <div class="mini-item">
+              <span class="mini-dot"></span>
+              <div><b>Kelola Penulis</b><br><small>Mengatur data penulis yang terlibat dalam publikasi.</small></div>
+            </div>
+
+            <div class="mini-item">
+              <span class="mini-dot"></span>
+              <div><b>Approval Publikasi</b><br><small>Memantau status persetujuan dan validasi publikasi.</small></div>
+            </div>
+
+            <div class="mini-item">
+              <span class="mini-dot"></span>
+              <div><b>Export & API</b><br><small>Menyediakan export data dan layanan API publikasi.</small></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="/assets/js/basecoat.js" defer></script>
+  <script src="/assets/js/sidebar.js" defer></script>
+  <script src="/assets/js/popover.js" defer></script>
+  <script src="/assets/js/toast.js" defer></script>
+</body>
+</html>
