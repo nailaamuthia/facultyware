@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      (() => {
+        try {
+          const stored = localStorage.getItem("themeMode");
+          if (stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches) {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (_) {}
+        document.addEventListener("basecoat:theme", (event) => {
+          const mode = event.detail?.mode;
+          const dark = mode === "dark" ? true : mode === "light" ? false : !document.documentElement.classList.contains("dark");
+          document.documentElement.classList.toggle("dark", dark);
+          try { localStorage.setItem("themeMode", dark ? "dark" : "light"); } catch (_) {}
+        });
+      })();
+    </script>
+    <script>
+      (function () {
+        try {
+          const storedTheme = localStorage.getItem("themeVariant");
+          if (storedTheme) document.documentElement.classList.add(`theme-${storedTheme}`);
+        } catch (e) {}
+      })();
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Riwayat Approval — Sistem Publikasi B14</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  </head>
+  <body>
+
+    <%- include('../partials/sidebar') %>
+    <main id="content">
+      <header class="bg-background sticky inset-x-0 top-0 isolate flex shrink-0 items-center gap-2 border-b z-10">
+        <div class="flex h-14 w-full items-center gap-2 px-4">
+          <button type="button"
+            onclick="document.dispatchEvent(new CustomEvent('basecoat:sidebar'))"
+            aria-label="Toggle sidebar"
+            class="btn-sm-icon-ghost size-7 -ml-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2" /><path d="M9 3v18" />
+            </svg>
+          </button>
+          <a href="/approval" class="btn-ghost btn-sm">← Kembali</a>
+          <h1 class="text-lg font-semibold mr-auto">Riwayat Approval Publikasi</h1>
+          <button type="button" aria-label="Toggle dark mode"
+            onclick="document.dispatchEvent(new CustomEvent('basecoat:theme'))"
+            class="btn-icon-outline size-8">
+            <span class="hidden dark:block">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/>
+                <path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/>
+                <path d="M2 12h2"/><path d="M20 12h2"/>
+                <path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+              </svg>
+            </span>
+            <span class="block dark:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </header>
+
+      <div class="p-6">
+        <div class="card">
+          <table class="table w-full">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Judul Publikasi</th>
+                <th>Tipe</th>
+                <th>Status</th>
+                <th>Catatan</th>
+                <th>Tanggal Aksi</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (riwayat.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="text-center text-muted-foreground py-8">
+                    Belum ada riwayat approval
+                  </td>
+                </tr>
+              <% } %>
+              <% riwayat.forEach((item, i) => { %>
+                <tr>
+                  <td><%= i + 1 %></td>
+                  <td><%= item.title %></td>
+                  <td><%= item.publication_type || '-' %></td>
+                  <td>
+                    <% if (item.status === 'approved') { %>
+                      <span class="badge badge-success">Disetujui</span>
+                    <% } else { %>
+                      <span class="badge badge-destructive">Ditolak</span>
+                    <% } %>
+                  </td>
+                  <td><%= item.approval_note || '-' %></td>
+                  <td><%= item.approved_at ? new Date(item.approved_at).toLocaleString('id-ID') : '-' %></td>
+                  <td>
+                    <a href="/approval/<%= item.id %>" class="btn-sm-outline">Detail</a>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <div id="toaster" class="toaster"></div>
+  </body>
+</html>

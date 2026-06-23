@@ -1,0 +1,55 @@
+<%- include('../partials/sidebar') %>
+<main id="content">
+  <header class="bg-background sticky inset-x-0 top-0 isolate flex shrink-0 items-center gap-2 border-b z-10">
+    <div class="flex h-14 w-full items-center gap-2 px-4">
+      <a href="/approval" class="btn-ghost btn-sm">← Kembali</a>
+      <h1 class="text-lg font-semibold">Riwayat Approval Publikasi</h1>
+    </div>
+  </header>
+
+  <div class="p-6">
+    <div class="card">
+      <table class="table w-full">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Judul Publikasi</th>
+            <th>Tipe</th>
+            <th>Status</th>
+            <th>Catatan</th>
+            <th>Tanggal Aksi</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (riwayat.length === 0) { %>
+            <tr>
+              <td colspan="7" class="text-center text-muted-foreground py-8">
+                Belum ada riwayat approval
+              </td>
+            </tr>
+          <% } %>
+          <% riwayat.forEach((item, i) => { %>
+            <tr>
+              <td><%= i + 1 %></td>
+              <td><%= item.title %></td>
+              <td><%= item.publication_type || '-' %></td>
+              <td>
+                <% if (item.status === 'approved') { %>
+                  <span class="badge badge-success">Disetujui</span>
+                <% } else { %>
+                  <span class="badge badge-destructive">Ditolak</span>
+                <% } %>
+              </td>
+              <td><%= item.approval_note || '-' %></td>
+              <td><%= item.approved_at ? new Date(item.approved_at).toLocaleString('id-ID') : '-' %></td>
+              <td>
+                <a href="/approval/<%= item.id %>" class="btn-sm-outline">Detail</a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
