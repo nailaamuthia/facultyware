@@ -34,7 +34,6 @@
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
   </head>
   <body>
-
     <%- include('../partials/sidebar') %>
     <main id="content">
       <header class="bg-background sticky inset-x-0 top-0 isolate flex shrink-0 items-center gap-2 border-b z-10">
@@ -48,7 +47,6 @@
               <rect width="18" height="18" x="3" y="3" rx="2" /><path d="M9 3v18" />
             </svg>
           </button>
-          <a href="/approval" class="btn-ghost btn-sm">← Kembali</a>
           <h1 class="text-lg font-semibold mr-auto">Riwayat Approval Publikasi</h1>
           <button type="button" aria-label="Toggle dark mode"
             onclick="document.dispatchEvent(new CustomEvent('basecoat:theme'))"
@@ -101,9 +99,9 @@
                   <td><%= item.publication_type || '-' %></td>
                   <td>
                     <% if (item.status === 'approved') { %>
-                      <span class="badge badge-success">Disetujui</span>
+                      <span class="badge" style="background:#16a34a;color:white;">Disetujui</span>
                     <% } else { %>
-                      <span class="badge badge-destructive">Ditolak</span>
+                      <span class="badge" style="background:#dc2626;color:white;">Ditolak</span>
                     <% } %>
                   </td>
                   <td><%= item.approval_note || '-' %></td>
@@ -118,7 +116,6 @@
         </div>
       </div>
     </main>
-
     <div id="toaster" class="toaster"></div>
   </body>
 </html>

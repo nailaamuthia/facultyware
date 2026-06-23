@@ -3,28 +3,29 @@ const db = require('../lib/db');
 // 1. Daftar undangan publikasi
 const index = async (req, res, next) => {
   try {
+    const userId = req.session.userId;
     const search = req.query.search || '';
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
     const offset = (page - 1) * limit;
 
     const [undangan] = await db.query(`
-      SELECT pa.id, pa.publication_id, pa.status, pa.author_order,
-             pa.is_corresponding, pa.approved_at, pa.approval_note,
+      SELECT ua.id, ua.publication_id, ua.status,
+             ua.approved_at, ua.approval_note,
              p.title, p.publication_type, p.publication_date
-      FROM publication_authors pa
-      JOIN publications p ON pa.publication_id = p.id
-      WHERE p.title LIKE ?
-      ORDER BY p.created_at DESC
+      FROM undangan_approval ua
+      JOIN publications p ON ua.publication_id = p.id
+      WHERE ua.invited_user_id = ? AND p.title LIKE ?
+      ORDER BY ua.created_at DESC
       LIMIT ? OFFSET ?
-    `, [`%${search}%`, limit, offset]);
+    `, [userId, `%${search}%`, limit, offset]);
 
     const [[{ total }]] = await db.query(`
       SELECT COUNT(*) as total
-      FROM publication_authors pa
-      JOIN publications p ON pa.publication_id = p.id
-      WHERE p.title LIKE ?
-    `, [`%${search}%`]);
+      FROM undangan_approval ua
+      JOIN publications p ON ua.publication_id = p.id
+      WHERE ua.invited_user_id = ? AND p.title LIKE ?
+    `, [userId, `%${search}%`]);
 
     res.render('approval/index', {
       title: 'Daftar Undangan Publikasi',
@@ -44,11 +45,11 @@ const show = async (req, res, next) => {
   try {
     const { id } = req.params;
     const [[undangan]] = await db.query(`
-      SELECT pa.*, p.title, p.publication_type, p.publication_date,
+      SELECT ua.*, p.title, p.publication_type, p.publication_date,
              p.doi, p.url, p.abstract
-      FROM publication_authors pa
-      JOIN publications p ON pa.publication_id = p.id
-      WHERE pa.id = ?
+      FROM undangan_approval ua
+      JOIN publications p ON ua.publication_id = p.id
+      WHERE ua.id = ?
     `, [id]);
 
     if (!undangan) return res.status(404).render('error', { message: 'Undangan tidak ditemukan', status: 404 });
@@ -74,7 +75,7 @@ const action = async (req, res, next) => {
     }
 
     await db.query(`
-      UPDATE publication_authors
+      UPDATE undangan_approval
       SET status = ?, approval_note = ?, approved_at = NOW()
       WHERE id = ?
     `, [status, approval_note || null, id]);
@@ -88,14 +89,15 @@ const action = async (req, res, next) => {
 // 4. Riwayat approval
 const history = async (req, res, next) => {
   try {
+    const userId = req.session.userId;
     const [riwayat] = await db.query(`
-      SELECT pa.id, pa.status, pa.approval_note, pa.approved_at,
+      SELECT ua.id, ua.status, ua.approval_note, ua.approved_at,
              p.title, p.publication_type, p.publication_date
-      FROM publication_authors pa
-      JOIN publications p ON pa.publication_id = p.id
-      WHERE pa.status != 'pending'
-      ORDER BY pa.approved_at DESC
-    `);
+      FROM undangan_approval ua
+      JOIN publications p ON ua.publication_id = p.id
+      WHERE ua.invited_user_id = ? AND ua.status != 'pending'
+      ORDER BY ua.approved_at DESC
+    `, [userId]);
 
     res.render('approval/history', {
       title: 'Riwayat Approval',
@@ -112,11 +114,11 @@ const download = async (req, res, next) => {
   try {
     const { id } = req.params;
     const [[undangan]] = await db.query(`
-      SELECT pa.*, p.title, p.publication_type, p.publication_date,
+      SELECT ua.*, p.title, p.publication_type, p.publication_date,
              p.doi, p.url, p.abstract
-      FROM publication_authors pa
-      JOIN publications p ON pa.publication_id = p.id
-      WHERE pa.id = ?
+      FROM undangan_approval ua
+      JOIN publications p ON ua.publication_id = p.id
+      WHERE ua.id = ?
     `, [id]);
 
     if (!undangan) return res.status(404).send('Not found');
@@ -177,12 +179,11 @@ const download = async (req, res, next) => {
 const apiList = async (req, res, next) => {
   try {
     const [data] = await db.query(`
-      SELECT pa.id, pa.status, pa.author_order, pa.is_corresponding,
-             pa.approved_at, pa.approval_note,
+      SELECT ua.id, ua.status, ua.approved_at, ua.approval_note,
              p.title, p.publication_type, p.publication_date, p.doi
-      FROM publication_authors pa
-      JOIN publications p ON pa.publication_id = p.id
-      ORDER BY p.created_at DESC
+      FROM undangan_approval ua
+      JOIN publications p ON ua.publication_id = p.id
+      ORDER BY ua.created_at DESC
     `);
     res.json({ success: true, data });
   } catch (err) {

@@ -11,6 +11,7 @@ var usersRouter = require('./routes/users');
 
 var publikasiRouter = require('./routes/publikasi');
 var approvalRouter = require('./routes/approval');
+var authorsRouter = require('./routes/authors');
 
 const { notFoundHandler, errorHandler } = require('./middlewares/error');
 
@@ -56,6 +57,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/publikasi', publikasiRouter);
 app.use('/approval', approvalRouter);
+app.use('/authors', authorsRouter);
 
 // ─── Error Handlers ───
 app.use(notFoundHandler);
