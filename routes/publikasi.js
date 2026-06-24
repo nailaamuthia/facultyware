@@ -36,6 +36,8 @@ router.get("/:id/edit", isAuthenticated, publikasiController.edit);
 router.post("/:id/update", isAuthenticated, publikasiController.update);
 router.get("/:id/export/pdf", isAuthenticated, exportController.exportSinglePDF);
 router.post("/:id/delete", isAuthenticated, publikasiController.destroy);
+router.post("/:id/tambah-penulis", isAuthenticated, publikasiController.tambahPenulis);
+router.post("/:id/penulis/:penulisId/delete", isAuthenticated, publikasiController.hapusPenulis);
 router.get("/:id", isAuthenticated, publikasiController.show);
 
 module.exports = router;

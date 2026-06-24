@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      (() => {
+        try {
+          const stored = localStorage.getItem("themeMode");
+          if (stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches) {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (_) {}
+        document.addEventListener("basecoat:theme", (event) => {
+          const mode = event.detail?.mode;
+          const dark = mode === "dark" ? true : mode === "light" ? false : !document.documentElement.classList.contains("dark");
+          document.documentElement.classList.toggle("dark", dark);
+          try { localStorage.setItem("themeMode", dark ? "dark" : "light"); } catch (_) {}
+        });
+      })();
+    </script>
+    <script>
+      (function () {
+        try {
+          const storedTheme = localStorage.getItem("themeVariant");
+          if (storedTheme) document.documentElement.classList.add(`theme-${storedTheme}`);
+        } catch (e) {}
+      })();
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Detail Undangan — Sistem Publikasi B14</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  </head>
+  <body>
+    <%- include('../partials/sidebar') %>
+    <main id="content">
+      <header class="bg-background sticky inset-x-0 top-0 isolate flex shrink-0 items-center gap-2 border-b z-10">
+        <div class="flex h-14 w-full items-center gap-2 px-4">
+          <button type="button"
+            onclick="document.dispatchEvent(new CustomEvent('basecoat:sidebar'))"
+            aria-label="Toggle sidebar"
+            class="btn-sm-icon-ghost size-7 -ml-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2" /><path d="M9 3v18" />
+            </svg>
+          </button>
+          <a href="/approval" class="btn-ghost btn-sm">← Kembali</a>
+          <h1 class="text-lg font-semibold mr-auto">Detail Undangan Publikasi</h1>
+          <button type="button" aria-label="Toggle dark mode"
+            onclick="document.dispatchEvent(new CustomEvent('basecoat:theme'))"
+            class="btn-icon-outline size-8">
+            <span class="hidden dark:block">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/>
+                <path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/>
+                <path d="M2 12h2"/><path d="M20 12h2"/>
+                <path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+              </svg>
+            </span>
+            <span class="block dark:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </header>
+
+      <div class="p-6 max-w-3xl">
+        <% if (locals.query && locals.query.success) { %>
+          <div class="alert alert-success mb-4">Berhasil memperbarui status approval!</div>
+        <% } %>
+
+        <!-- Info Publikasi -->
+        <div class="card mb-6">
+          <div class="card-header"><h2 class="font-semibold">Informasi Publikasi</h2></div>
+          <div class="card-content grid gap-3" style="padding:16px;">
+            <div><span class="text-muted-foreground text-sm">Judul</span><p class="font-medium"><%= undangan.title %></p></div>
+            <div><span class="text-muted-foreground text-sm">Tipe</span><p><%= undangan.publication_type || '-' %></p></div>
+            <div><span class="text-muted-foreground text-sm">Tanggal Publikasi</span><p><%= undangan.publication_date ? new Date(undangan.publication_date).toLocaleDateString('id-ID') : '-' %></p></div>
+            <div><span class="text-muted-foreground text-sm">DOI</span><p><%= undangan.doi || '-' %></p></div>
+            <div><span class="text-muted-foreground text-sm">URL</span><p><%= undangan.url || '-' %></p></div>
+            <div><span class="text-muted-foreground text-sm">Abstrak</span><p><%= undangan.abstract || '-' %></p></div>
+          </div>
+        </div>
+
+        <!-- Status Saat Ini -->
+        <div class="card mb-6">
+          <div class="card-header"><h2 class="font-semibold">Status Approval</h2></div>
+          <div class="card-content grid gap-3" style="padding:16px;">
+            <div>
+              <span class="text-muted-foreground text-sm">Status</span>
+              <p>
+                <% if (undangan.status === 'approved') { %>
+                  <span class="badge" style="background:#16a34a;color:white;">Disetujui</span>
+                <% } else if (undangan.status === 'rejected') { %>
+                  <span class="badge" style="background:#dc2626;color:white;">Ditolak</span>
+                <% } else { %>
+                  <span class="badge">Menunggu</span>
+                <% } %>
+              </p>
+            </div>
+            <% if (undangan.approved_at) { %>
+              <div><span class="text-muted-foreground text-sm">Tanggal Aksi</span><p><%= new Date(undangan.approved_at).toLocaleString('id-ID') %></p></div>
+            <% } %>
+            <% if (undangan.approval_note) { %>
+              <div><span class="text-muted-foreground text-sm">Catatan</span><p><%= undangan.approval_note %></p></div>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Form Approval (hanya tampil jika masih pending) -->
+        <% if (undangan.status === 'pending') { %>
+        <div class="card mb-6">
+          <div class="card-header"><h2 class="font-semibold">Berikan Keputusan</h2></div>
+          <div class="card-content" style="padding:16px;">
+            <form method="POST" action="/approval/<%= undangan.id %>/action" class="grid gap-4">
+              <div>
+                <label class="text-sm font-medium">Catatan (opsional)</label>
+                <textarea name="approval_note" class="input w-full mt-1" rows="3" placeholder="Tulis catatan..."></textarea>
+              </div>
+              <div class="flex gap-3">
+                <button type="submit" name="status" value="approved" class="btn" style="background:#16a34a;color:white;">✓ Setuju</button>
+                <button type="submit" name="status" value="rejected" class="btn" style="background:#dc2626;color:white;">✗ Tolak</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <% } %>
+
+        <!-- Download PDF -->
+        <a href="/approval/<%= undangan.id %>/download" class="btn-outline">⬇ Download PDF</a>
+      </div>
+    </main>
+    <div id="toaster" class="toaster"></div>
+  </body>
+</html>

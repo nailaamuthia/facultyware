@@ -210,7 +210,103 @@
             </ul>
           </section>
         </div>
+        <div class="card fti-card" style="margin-top: 24px;">
+          <header style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="margin:0;">Penulis Publikasi</h2>
+            <div style="display:flex; gap:8px;">
+              <button onclick="document.getElementById('modal-pilih-penulis').style.display='flex'" 
+                style="background:#f0f4ff;color:#3d4658;border:1.5px solid #6d7898;font-weight:600;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:0.85rem;">
+                Pilih Penulis
+              </button>
+              <a href="/authors/create?publikasi_id=<%= publikasi.id %>" class="btn fti-btn-primary" style="font-size:0.85rem;">
+                + Tambah Penulis
+              </a>
+            </div>
+          </header>
 
+          <!-- Modal Pilih Penulis -->
+          <div id="modal-pilih-penulis" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+            <div style="background:var(--color-background); border-radius:16px; padding:24px; width:90%; max-width:520px; max-height:80vh; overflow-y:auto;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h3 style="margin:0;">Pilih Penulis</h3>
+                <button onclick="document.getElementById('modal-pilih-penulis').style.display='none'" 
+                  style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--fti-grey);">✕</button>
+              </div>
+              <input type="text" id="cari-penulis" placeholder="Cari nama penulis..." 
+                oninput="filterPenulis(this.value)"
+                style="width:100%;padding:8px 12px;border:1px solid var(--color-border);border-radius:8px;margin-bottom:12px;font-size:0.9rem;box-sizing:border-box;"/>
+              <div id="list-penulis">
+                <% if (semuaPenulis && semuaPenulis.length > 0) { %>
+                  <% semuaPenulis.forEach(p => { %>
+                    <form action="/publikasi/<%= publikasi.id %>/tambah-penulis" method="POST" style="margin:0;">
+                      <input type="hidden" name="lecturer_id" value="<%= p.id %>"/>
+                      <button type="submit" class="penulis-item" style="width:100%;text-align:left;background:none;border:1px solid var(--color-border);border-radius:8px;padding:10px 14px;margin-bottom:8px;cursor:pointer;display:block;">
+                        <div style="font-weight:600;font-size:0.9rem;"><%= p.name %></div>
+                        <div style="font-size:0.8rem;color:var(--fti-grey);"><%= p.email || 'Email tidak dicantumkan' %></div>
+                      </button>
+                    </form>
+                  <% }) %>
+                <% } else { %>
+                  <p style="text-align:center;color:var(--fti-grey);">Semua dosen sudah menjadi penulis di publikasi ini.</p>
+                <% } %>
+              </div>
+            </div>
+          </div>
+          <section>
+            <% if (penulis && penulis.length > 0) { %>
+              <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                  <tr style="border-bottom:2px solid var(--color-border);">
+                    <th style="padding:10px 8px; text-align:left; font-size:0.82rem; color:var(--fti-blue);">No</th>
+                    <th style="padding:10px 8px; text-align:left; font-size:0.82rem; color:var(--fti-blue);">Nama</th>
+                    <th style="padding:10px 8px; text-align:left; font-size:0.82rem; color:var(--fti-blue);">Institusi</th>
+                    <th style="padding:10px 8px; text-align:left; font-size:0.82rem; color:var(--fti-blue);">Status</th>
+                    <th style="padding:10px 8px; text-align:left; font-size:0.82rem; color:var(--fti-blue);">Catatan</th>
+                    <th style="padding:10px 8px; text-align:left; font-size:0.82rem; color:var(--fti-blue);">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% penulis.forEach((p, i) => { %>
+                    <tr style="border-bottom:1px solid var(--color-border);">
+                      <td style="padding:12px 8px;"><%= i + 1 %></td>
+                      <td style="padding:12px 8px; font-weight:500;">
+                        <%= p.dosen_name || p.name || '-' %>
+                      </td>
+                      <td style="padding:12px 8px; color:var(--fti-grey);">
+                        <%= p.institution || '-' %>
+                      </td>
+                      <td style="padding:12px 8px;">
+                        <% if (p.status === 'approved') { %>
+                          <span style="background:#dcfce7;color:#166534;padding:3px 10px;border-radius:999px;font-size:0.78rem;font-weight:600;">Disetujui</span>
+                        <% } else if (p.status === 'rejected') { %>
+                          <span style="background:#fee2e2;color:#991b1b;padding:3px 10px;border-radius:999px;font-size:0.78rem;font-weight:600;">Ditolak</span>
+                        <% } else { %>
+                          <span style="background:#fef9c3;color:#854d0e;padding:3px 10px;border-radius:999px;font-size:0.78rem;font-weight:600;">Menunggu</span>
+                        <% } %>
+                      </td>
+                      <td style="padding:12px 8px; color:var(--fti-grey); font-size:0.88rem;">
+                        <%= p.approval_note || '-' %>
+                      </td>
+                      <td style="padding:12px 8px;">
+                        <form action="/publikasi/<%= publikasi.id %>/penulis/<%= p.id %>/delete" method="POST" style="margin:0;"
+                          data-nama-penulis="<%= (p.dosen_name || p.name || 'penulis ini') %>"
+                          onsubmit="return confirm('Yakin ingin menghapus ' + this.dataset.namaPenulis + ' dari daftar penulis?');">
+                          <button type="submit" style="background:rgba(239,68,68,0.1);color:#b91c1c;border:1px solid rgba(239,68,68,0.3);font-weight:600;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:0.78rem;">
+                            Hapus
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            <% } else { %>
+              <p style="color:var(--fti-grey); padding:20px 0; text-align:center;">
+                Belum ada penulis untuk publikasi ini.
+              </p>
+            <% } %>
+          </section>
+        </div>
       </div>
     </div>
   </main>
