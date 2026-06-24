@@ -253,6 +253,7 @@
             <% } %>
 
             <form action="/authors/store" method="POST">
+              <input type="hidden" name="publikasi_id" value="<%= publikasi_id || '' %>"/>
               <div class="form-row">
                 <div class="form-group">
                   <label for="name">Nama Penulis *</label>

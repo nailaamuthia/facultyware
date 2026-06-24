@@ -30,23 +30,24 @@ const create = (req, res) => {
   res.render("authors/create", { 
     pageTitle: "Tambah Penulis Publikasi", 
     user: getUser(req), 
-    error: null 
+    error: null,
+    publikasi_id: req.query.publikasi_id || null
   });
 };
 
 const store = async (req, res, next) => {
   try {
-    const { name, email, institution, expertise } = req.body;
+    const { name, email, institution, expertise, publikasi_id } = req.body;
     
     if (!name) {
       return res.render("authors/create", {
         pageTitle: "Tambah Penulis Publikasi", 
         user: getUser(req),
         error: "Nama penulis wajib diisi.",
+        publikasi_id: publikasi_id || null
       });
     }
 
-    // Check if author already exists
     const [existing] = await db.query(
       `SELECT id FROM authors WHERE LOWER(name) = LOWER(?) LIMIT 1`,
       [name]
@@ -57,13 +58,23 @@ const store = async (req, res, next) => {
         pageTitle: "Tambah Penulis Publikasi", 
         user: getUser(req),
         error: "Penulis dengan nama yang sama sudah ada.",
+        publikasi_id: publikasi_id || null
       });
     }
 
-    await db.query(
+    const [result] = await db.query(
       `INSERT INTO authors (name, email, institution, expertise) VALUES (?, ?, ?, ?)`,
       [name, email || null, institution || null, expertise || null]
     );
+
+    // Kalau datang dari halaman detail publikasi, hubungkan ke publication_authors
+    if (publikasi_id) {
+      await db.query(
+        `INSERT INTO publication_authors (publication_id, lecturer_id, name, email, institution, expertise, status) VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
+        [publikasi_id, result.insertId, name, email || null, institution || null, expertise || null]
+      );
+      return res.redirect("/publikasi/" + publikasi_id);
+    }
 
     res.redirect("/authors");
   } catch (err) { next(err); }

@@ -37,11 +37,32 @@ const store = async (req, res, next) => {
 const show = async (req, res, next) => {
   try {
     const [rows] = await db.query(`SELECT * FROM publications WHERE id = ?`, [req.params.id]);
-    if (rows.length === 0) return res.status(404).render("error", { pageTitle: "Tidak Ditemukan", user: getUser(req), message: "Data publikasi tidak ditemukan." });
-    res.render("publikasi/detail", { pageTitle: "Detail Publikasi", user: getUser(req), publikasi: rows[0] });
-  } catch (err) { next(err); }
-};
+    if (rows.length === 0) return res.status(404).render("error", { 
+      pageTitle: "Tidak Ditemukan", user: getUser(req), 
+      message: "Data publikasi tidak ditemukan." 
+    });
 
+    const [penulis] = await db.query(`
+      SELECT pa.*, u.name as dosen_name, u.email as dosen_email
+      FROM publication_authors pa
+      LEFT JOIN users u ON pa.lecturer_id = u.id
+      WHERE pa.publication_id = ?
+      ORDER BY pa.author_order ASC
+      `, [req.params.id]);
+
+    // Ambil semua penulis yang sudah ada di tabel authors
+    const [semuaPenulis] = await db.query(`SELECT * FROM authors ORDER BY name ASC`);
+
+    res.render("publikasi/detail", { 
+      pageTitle: "Detail Publikasi", 
+      user: getUser(req), 
+      publikasi: rows[0],
+      penulis: penulis,
+      semuaPenulis: semuaPenulis
+    });
+  } catch (err) { next(err);
+  }
+};
 const edit = async (req, res, next) => {
   try {
     const [rows] = await db.query(`SELECT * FROM publications WHERE id = ?`, [req.params.id]);
@@ -169,5 +190,30 @@ const apiDelete = async (req, res, next) => {
     res.status(500).json({ status: "error", message: err.message });
   }
 };
+const tambahPenulis = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { author_id } = req.body;
 
-module.exports = { index, create, store, show, edit, update, destroy, apiGetAll, apiGetById, apiCreate, apiUpdate, apiDelete };
+    // Ambil data penulis dari tabel authors
+    const [authors] = await db.query(`SELECT * FROM authors WHERE id = ?`, [author_id]);
+    if (authors.length === 0) return res.redirect("/publikasi/" + id);
+
+    const p = authors[0];
+
+    // Cek apakah sudah pernah ditambahkan
+    const [existing] = await db.query(
+      `SELECT id FROM publication_authors WHERE publication_id = ? AND name = ?`,
+      [id, p.name]
+    );
+    if (existing.length > 0) return res.redirect("/publikasi/" + id);
+
+    await db.query(
+      `INSERT INTO publication_authors (publication_id, name, email, institution, expertise, status) VALUES (?, ?, ?, ?, ?, 'pending')`,
+      [id, p.name, p.email || null, p.institution || null, p.expertise || null]
+    );
+
+    res.redirect("/publikasi/" + id);
+  } catch (err) { next(err); }
+};
+module.exports = { index, create, store, show, edit, update, destroy,  tambahPenulis, apiGetAll, apiGetById, apiCreate, apiUpdate, apiDelete };
