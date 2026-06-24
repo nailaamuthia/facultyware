@@ -13,7 +13,7 @@ const index = async (req, res, next) => {
   try {
     const [authors] = await db.query(`
       SELECT pa.*, COUNT(ap.id) as publication_count 
-      FROM publication_authors pa 
+      FROM authors pa 
       LEFT JOIN author_publications ap ON pa.id = ap.author_id 
       GROUP BY pa.id 
       ORDER BY pa.name ASC
@@ -48,7 +48,7 @@ const store = async (req, res, next) => {
 
     // Check if author already exists
     const [existing] = await db.query(
-      `SELECT id FROM publication_authors WHERE LOWER(name) = LOWER(?) LIMIT 1`,
+      `SELECT id FROM authors WHERE LOWER(name) = LOWER(?) LIMIT 1`,
       [name]
     );
 
@@ -61,7 +61,7 @@ const store = async (req, res, next) => {
     }
 
     await db.query(
-      `INSERT INTO publication_authors (name, email, institution, expertise) VALUES (?, ?, ?, ?)`,
+      `INSERT INTO authors (name, email, institution, expertise) VALUES (?, ?, ?, ?)`,
       [name, email || null, institution || null, expertise || null]
     );
 
@@ -71,7 +71,7 @@ const store = async (req, res, next) => {
 
 const show = async (req, res, next) => {
   try {
-    const [rows] = await db.query(`SELECT * FROM publication_authors WHERE id = ?`, [req.params.id]);
+    const [rows] = await db.query(`SELECT * FROM authors WHERE id = ?`, [req.params.id]);
     
     if (rows.length === 0) {
       return res.status(404).render("error", { 
@@ -102,7 +102,7 @@ const show = async (req, res, next) => {
 
 const edit = async (req, res, next) => {
   try {
-    const [rows] = await db.query(`SELECT * FROM publication_authors WHERE id = ?`, [req.params.id]);
+    const [rows] = await db.query(`SELECT * FROM authors WHERE id = ?`, [req.params.id]);
     
     if (rows.length === 0) {
       return res.status(404).render("error", { 
@@ -127,7 +127,7 @@ const update = async (req, res, next) => {
     const { id } = req.params;
 
     if (!name) {
-      const [rows] = await db.query(`SELECT * FROM publication_authors WHERE id = ?`, [id]);
+      const [rows] = await db.query(`SELECT * FROM authors WHERE id = ?`, [id]);
       return res.render("authors/edit", {
         pageTitle: "Edit Penulis Publikasi", 
         user: getUser(req),
@@ -138,12 +138,12 @@ const update = async (req, res, next) => {
 
     // Check if name already exists for other authors
     const [existing] = await db.query(
-      `SELECT id FROM publication_authors WHERE LOWER(name) = LOWER(?) AND id != ? LIMIT 1`,
+      `SELECT id FROM authors WHERE LOWER(name) = LOWER(?) AND id != ? LIMIT 1`,
       [name, id]
     );
 
     if (existing.length > 0) {
-      const [rows] = await db.query(`SELECT * FROM publication_authors WHERE id = ?`, [id]);
+      const [rows] = await db.query(`SELECT * FROM authors WHERE id = ?`, [id]);
       return res.render("authors/edit", {
         pageTitle: "Edit Penulis Publikasi", 
         user: getUser(req),
@@ -153,7 +153,7 @@ const update = async (req, res, next) => {
     }
 
     await db.query(
-      `UPDATE publication_authors SET name=?, email=?, institution=?, expertise=?, updated_at=NOW() WHERE id=?`,
+      `UPDATE authors SET name=?, email=?, institution=?, expertise=?, updated_at=NOW() WHERE id=?`,
       [name, email || null, institution || null, expertise || null, id]
     );
 
@@ -165,7 +165,7 @@ const destroy = async (req, res, next) => {
   try {
     const { id } = req.params;
     
-    const [rows] = await db.query(`SELECT * FROM publication_authors WHERE id = ?`, [id]);
+    const [rows] = await db.query(`SELECT * FROM authors WHERE id = ?`, [id]);
     if (rows.length === 0) {
       return res.status(404).render("error", {
         pageTitle: "Tidak Ditemukan", 
@@ -178,7 +178,7 @@ const destroy = async (req, res, next) => {
     await db.query(`DELETE FROM author_publications WHERE author_id = ?`, [id]);
     
     // Delete author
-    await db.query(`DELETE FROM publication_authors WHERE id = ?`, [id]);
+    await db.query(`DELETE FROM authors WHERE id = ?`, [id]);
     
     res.redirect("/authors");
   } catch (err) { next(err); }
@@ -190,7 +190,7 @@ const exportCSV = async (req, res, next) => {
   try {
     const [authors] = await db.query(`
       SELECT pa.*, COUNT(ap.id) as publication_count 
-      FROM publication_authors pa 
+      FROM authors pa 
       LEFT JOIN author_publications ap ON pa.id = ap.author_id 
       GROUP BY pa.id 
       ORDER BY pa.name ASC
@@ -208,7 +208,7 @@ const exportExcel = async (req, res, next) => {
   try {
     const [authors] = await db.query(`
       SELECT pa.*, COUNT(ap.id) as publication_count 
-      FROM publication_authors pa 
+      FROM authors pa 
       LEFT JOIN author_publications ap ON pa.id = ap.author_id 
       GROUP BY pa.id 
       ORDER BY pa.name ASC
@@ -265,7 +265,7 @@ const apiGetAll = async (req, res, next) => {
   try {
     const [authors] = await db.query(`
       SELECT pa.*, COUNT(ap.id) as publication_count 
-      FROM publication_authors pa 
+      FROM authors pa 
       LEFT JOIN author_publications ap ON pa.id = ap.author_id 
       GROUP BY pa.id 
       ORDER BY pa.name ASC
@@ -283,7 +283,7 @@ const apiGetAll = async (req, res, next) => {
 
 const apiGetById = async (req, res, next) => {
   try {
-    const [rows] = await db.query(`SELECT * FROM publication_authors WHERE id = ?`, [req.params.id]);
+    const [rows] = await db.query(`SELECT * FROM authors WHERE id = ?`, [req.params.id]);
     
     if (rows.length === 0) {
       return res.status(404).json({ status: "error", message: "Penulis tidak ditemukan." });
@@ -321,7 +321,7 @@ const apiCreate = async (req, res, next) => {
 
     // Check if author already exists
     const [existing] = await db.query(
-      `SELECT id FROM publication_authors WHERE LOWER(name) = LOWER(?) LIMIT 1`,
+      `SELECT id FROM authors WHERE LOWER(name) = LOWER(?) LIMIT 1`,
       [name]
     );
 
@@ -333,13 +333,13 @@ const apiCreate = async (req, res, next) => {
     }
 
     const result = await db.query(
-      `INSERT INTO publication_authors (name, email, institution, expertise) VALUES (?, ?, ?, ?)`,
+      `INSERT INTO authors (name, email, institution, expertise) VALUES (?, ?, ?, ?)`,
       [name, email || null, institution || null, expertise || null]
     );
 
     const authorId = result[0].insertId;
 
-    const [newAuthor] = await db.query(`SELECT * FROM publication_authors WHERE id = ?`, [authorId]);
+    const [newAuthor] = await db.query(`SELECT * FROM authors WHERE id = ?`, [authorId]);
 
     res.status(201).json({ 
       status: "success", 
@@ -364,14 +364,14 @@ const apiUpdate = async (req, res, next) => {
     }
 
     // Check if author exists
-    const [rows] = await db.query(`SELECT * FROM publication_authors WHERE id = ?`, [id]);
+    const [rows] = await db.query(`SELECT * FROM authors WHERE id = ?`, [id]);
     if (rows.length === 0) {
       return res.status(404).json({ status: "error", message: "Penulis tidak ditemukan." });
     }
 
     // Check if name already exists for other authors
     const [existing] = await db.query(
-      `SELECT id FROM publication_authors WHERE LOWER(name) = LOWER(?) AND id != ? LIMIT 1`,
+      `SELECT id FROM authors WHERE LOWER(name) = LOWER(?) AND id != ? LIMIT 1`,
       [name, id]
     );
 
@@ -383,11 +383,11 @@ const apiUpdate = async (req, res, next) => {
     }
 
     await db.query(
-      `UPDATE publication_authors SET name=?, email=?, institution=?, expertise=?, updated_at=NOW() WHERE id=?`,
+      `UPDATE authors SET name=?, email=?, institution=?, expertise=?, updated_at=NOW() WHERE id=?`,
       [name, email || null, institution || null, expertise || null, id]
     );
 
-    const [updatedAuthor] = await db.query(`SELECT * FROM publication_authors WHERE id = ?`, [id]);
+    const [updatedAuthor] = await db.query(`SELECT * FROM authors WHERE id = ?`, [id]);
 
     res.json({ 
       status: "success", 
@@ -403,7 +403,7 @@ const apiDelete = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const [rows] = await db.query(`SELECT * FROM publication_authors WHERE id = ?`, [id]);
+    const [rows] = await db.query(`SELECT * FROM authors WHERE id = ?`, [id]);
     if (rows.length === 0) {
       return res.status(404).json({ status: "error", message: "Penulis tidak ditemukan." });
     }
@@ -412,7 +412,7 @@ const apiDelete = async (req, res, next) => {
     await db.query(`DELETE FROM author_publications WHERE author_id = ?`, [id]);
 
     // Delete author
-    await db.query(`DELETE FROM publication_authors WHERE id = ?`, [id]);
+    await db.query(`DELETE FROM authors WHERE id = ?`, [id]);
 
     res.json({ 
       status: "success", 

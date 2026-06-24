@@ -91,7 +91,7 @@ const login = async (req, res, next) => {
     req.session.username = user.name;
     req.session.email = user.email;
     req.session.role =
-      user.email === "salmiah@gmail.com" ? "dosen_anggota" : "dosen";
+    user.email === "anggota@gmail.com" ? "dosen_anggota" : "dosen";
 
     res.redirect("/home");
   } catch (err) {

@@ -47,8 +47,15 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-  res.locals.user = req.session.user || null;
+  res.locals.user = req.session.userId ? {
+    id: req.session.userId,
+    name: req.session.username,
+    email: req.session.email,
+    role: req.session.role || 'dosen',
+  } : null;
   res.locals.isAuthenticated = !!req.session.userId;
+  console.log('SESSION ROLE:', req.session.role);
+  console.log('LOCALS USER:', res.locals.user);
   next();
 });
 
