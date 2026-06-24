@@ -1,31 +1,44 @@
 const db = require('../lib/db');
 
-// 1. Daftar undangan publikasi
+// Helper: kondisi WHERE supaya konsisten di semua query.
+// - Dosen biasa hanya melihat baris penulis miliknya sendiri (lecturer_id = userId).
+// - Role 'dosen' yang berperan sebagai admin (user pertama / Admin) juga melihat
+//   penulis eksternal (lecturer_id IS NULL) karena merekalah yang harus approve.
+const buildScope = (req) => {
+  const userId = req.session.userId;
+  const isAdmin = req.session.role === 'dosen'; // role non-dosen_anggota dianggap admin/dosen utama
+  if (isAdmin) {
+    return { clause: '(pa.lecturer_id = ? OR pa.lecturer_id IS NULL)', params: [userId] };
+  }
+  return { clause: 'pa.lecturer_id = ?', params: [userId] };
+};
+
+// 1. Daftar undangan publikasi (penulis yang menunggu/diproses approval)
 const index = async (req, res, next) => {
   try {
-    const userId = req.session.userId;
     const search = req.query.search || '';
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
     const offset = (page - 1) * limit;
+    const scope = buildScope(req);
 
     const [undangan] = await db.query(`
-      SELECT ua.id, ua.publication_id, ua.status,
-             ua.approved_at, ua.approval_note,
+      SELECT pa.id, pa.publication_id, pa.status,
+             pa.approved_at, pa.approval_note,
              p.title, p.publication_type, p.publication_date
-      FROM undangan_approval ua
-      JOIN publications p ON ua.publication_id = p.id
-      WHERE ua.invited_user_id = ? AND p.title LIKE ?
-      ORDER BY ua.created_at DESC
+      FROM publication_authors pa
+      JOIN publications p ON pa.publication_id = p.id
+      WHERE ${scope.clause} AND p.title LIKE ?
+      ORDER BY pa.created_at DESC
       LIMIT ? OFFSET ?
-    `, [userId, `%${search}%`, limit, offset]);
+    `, [...scope.params, `%${search}%`, limit, offset]);
 
     const [[{ total }]] = await db.query(`
       SELECT COUNT(*) as total
-      FROM undangan_approval ua
-      JOIN publications p ON ua.publication_id = p.id
-      WHERE ua.invited_user_id = ? AND p.title LIKE ?
-    `, [userId, `%${search}%`]);
+      FROM publication_authors pa
+      JOIN publications p ON pa.publication_id = p.id
+      WHERE ${scope.clause} AND p.title LIKE ?
+    `, [...scope.params, `%${search}%`]);
 
     res.render('approval/index', {
       title: 'Daftar Undangan Publikasi',
@@ -44,13 +57,15 @@ const index = async (req, res, next) => {
 const show = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const scope = buildScope(req);
+
     const [[undangan]] = await db.query(`
-      SELECT ua.*, p.title, p.publication_type, p.publication_date,
+      SELECT pa.*, p.title, p.publication_type, p.publication_date,
              p.doi, p.url, p.abstract
-      FROM undangan_approval ua
-      JOIN publications p ON ua.publication_id = p.id
-      WHERE ua.id = ?
-    `, [id]);
+      FROM publication_authors pa
+      JOIN publications p ON pa.publication_id = p.id
+      WHERE pa.id = ? AND ${scope.clause}
+    `, [id, ...scope.params]);
 
     if (!undangan) return res.status(404).render('error', { message: 'Undangan tidak ditemukan', status: 404 });
 
@@ -69,16 +84,17 @@ const action = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { status, approval_note } = req.body;
+    const scope = buildScope(req);
 
     if (!['approved', 'rejected'].includes(status)) {
       return res.status(400).json({ message: 'Status tidak valid' });
     }
 
     await db.query(`
-      UPDATE undangan_approval
-      SET status = ?, approval_note = ?, approved_at = NOW()
-      WHERE id = ?
-    `, [status, approval_note || null, id]);
+      UPDATE publication_authors pa
+      SET pa.status = ?, pa.approval_note = ?, pa.approved_at = NOW()
+      WHERE pa.id = ? AND ${scope.clause}
+    `, [status, approval_note || null, id, ...scope.params]);
 
     res.redirect(`/approval/${id}?success=1`);
   } catch (err) {
@@ -89,15 +105,15 @@ const action = async (req, res, next) => {
 // 4. Riwayat approval
 const history = async (req, res, next) => {
   try {
-    const userId = req.session.userId;
+    const scope = buildScope(req);
     const [riwayat] = await db.query(`
-      SELECT ua.id, ua.status, ua.approval_note, ua.approved_at,
+      SELECT pa.id, pa.status, pa.approval_note, pa.approved_at,
              p.title, p.publication_type, p.publication_date
-      FROM undangan_approval ua
-      JOIN publications p ON ua.publication_id = p.id
-      WHERE ua.invited_user_id = ? AND ua.status != 'pending'
-      ORDER BY ua.approved_at DESC
-    `, [userId]);
+      FROM publication_authors pa
+      JOIN publications p ON pa.publication_id = p.id
+      WHERE ${scope.clause} AND pa.status != 'pending'
+      ORDER BY pa.approved_at DESC
+    `, scope.params);
 
     res.render('approval/history', {
       title: 'Riwayat Approval',
@@ -113,13 +129,15 @@ const history = async (req, res, next) => {
 const download = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const scope = buildScope(req);
+
     const [[undangan]] = await db.query(`
-      SELECT ua.*, p.title, p.publication_type, p.publication_date,
+      SELECT pa.*, p.title, p.publication_type, p.publication_date,
              p.doi, p.url, p.abstract
-      FROM undangan_approval ua
-      JOIN publications p ON ua.publication_id = p.id
-      WHERE ua.id = ?
-    `, [id]);
+      FROM publication_authors pa
+      JOIN publications p ON pa.publication_id = p.id
+      WHERE pa.id = ? AND ${scope.clause}
+    `, [id, ...scope.params]);
 
     if (!undangan) return res.status(404).send('Not found');
 
@@ -179,11 +197,11 @@ const download = async (req, res, next) => {
 const apiList = async (req, res, next) => {
   try {
     const [data] = await db.query(`
-      SELECT ua.id, ua.status, ua.approved_at, ua.approval_note,
+      SELECT pa.id, pa.status, pa.approved_at, pa.approval_note,
              p.title, p.publication_type, p.publication_date, p.doi
-      FROM undangan_approval ua
-      JOIN publications p ON ua.publication_id = p.id
-      ORDER BY ua.created_at DESC
+      FROM publication_authors pa
+      JOIN publications p ON pa.publication_id = p.id
+      ORDER BY pa.created_at DESC
     `);
     res.json({ success: true, data });
   } catch (err) {

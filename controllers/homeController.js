@@ -11,28 +11,28 @@ exports.index = async (req, res) => {
   try {
     if (user.role === 'dosen_anggota') {
       const [[{ totalUndangan }]] = await db.query(
-        `SELECT COUNT(*) AS totalUndangan FROM undangan_approval WHERE invited_user_id = ?`,
+        `SELECT COUNT(*) AS totalUndangan FROM publication_authors WHERE lecturer_id = ?`,
         [user.id]
       );
       const [[{ totalDisetujui }]] = await db.query(
-        `SELECT COUNT(*) AS totalDisetujui FROM undangan_approval WHERE invited_user_id = ? AND status = 'approved'`,
+        `SELECT COUNT(*) AS totalDisetujui FROM publication_authors WHERE lecturer_id = ? AND status = 'approved'`,
         [user.id]
       );
       const [[{ totalDitolak }]] = await db.query(
-        `SELECT COUNT(*) AS totalDitolak FROM undangan_approval WHERE invited_user_id = ? AND status = 'rejected'`,
+        `SELECT COUNT(*) AS totalDitolak FROM publication_authors WHERE lecturer_id = ? AND status = 'rejected'`,
         [user.id]
       );
       const [[{ totalPending }]] = await db.query(
-        `SELECT COUNT(*) AS totalPending FROM undangan_approval WHERE invited_user_id = ? AND status = 'pending'`,
+        `SELECT COUNT(*) AS totalPending FROM publication_authors WHERE lecturer_id = ? AND status = 'pending'`,
         [user.id]
       );
       const [undanganTerbaru] = await db.query(
-        `SELECT ua.id, ua.status, ua.created_at,
+        `SELECT pa.id, pa.status, pa.created_at,
                 p.title, p.publication_type, p.publication_date
-         FROM undangan_approval ua
-         JOIN publications p ON ua.publication_id = p.id
-         WHERE ua.invited_user_id = ?
-         ORDER BY ua.created_at DESC LIMIT 5`,
+         FROM publication_authors pa
+         JOIN publications p ON pa.publication_id = p.id
+         WHERE pa.lecturer_id = ?
+         ORDER BY pa.created_at DESC LIMIT 5`,
         [user.id]
       );
 

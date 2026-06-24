@@ -144,7 +144,7 @@
           </header>
           <section>
             <% if (typeof error !== 'undefined' && error) { %>
-              <div class="alert alert-destructive mb-4"><%= error %></div>
+              <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);color:#b91c1c;padding:12px 16px;border-radius:10px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;"><span style="font-size:1.1rem;flex-shrink:0;">⚠️</span><span style="white-space:normal;word-break:break-word;line-height:1.5;"><%= error %></span></div>
             <% } %>
 
             <form action="/publikasi/store" method="POST" class="form grid gap-6">

@@ -68,10 +68,12 @@ const store = async (req, res, next) => {
     );
 
     // Kalau datang dari halaman detail publikasi, hubungkan ke publication_authors
+    // sebagai penulis eksternal (bukan dosen internal, jadi lecturer_id NULL —
+    // tidak perlu melalui proses approval dosen)
     if (publikasi_id) {
       await db.query(
-        `INSERT INTO publication_authors (publication_id, lecturer_id, name, email, institution, expertise, status) VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
-        [publikasi_id, result.insertId, name, email || null, institution || null, expertise || null]
+        `INSERT INTO publication_authors (publication_id, lecturer_id, name, email, institution, expertise, status) VALUES (?, NULL, ?, ?, ?, ?, 'approved')`,
+        [publikasi_id, name, email || null, institution || null, expertise || null]
       );
       return res.redirect("/publikasi/" + publikasi_id);
     }
